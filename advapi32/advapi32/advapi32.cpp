@@ -888,9 +888,8 @@ BOOL WINAPI DllMain(HINSTANCE hInst, DWORD reason, LPVOID)
 }
 
 // Hacky i know, shoot me, im a python guy!
-bool file_exists(const char *filename){
-	ifstream ifile(filename);
-	return ifile.good();
+bool file_exists(LPCWSTR filename){
+    return GetFileAttributes(filename) != INVALID_FILE_ATTRIBUTES;
 }
 
 extern "C" BOOL WINAPI __stdcall myCryptDecrypt(
@@ -920,7 +919,7 @@ extern "C" BOOL WINAPI __stdcall myCryptDecrypt(
 		MessageBoxA(NULL, "Error, cryptdecrypt returned false!", "Error", MB_OK);
 	}
 
-	if (file_exists("advapi32_config_dump_cryptDecrypt")){
+	if (file_exists(L"advapi32_config_dump_cryptDecrypt")){
 		HANDLE hDestinationFile = INVALID_HANDLE_VALUE;
 		wstring dstName = L".\\packets_" + ::to_wstring(start_time) +L"\\"+ ::to_wstring(CURR_PACKET++) + L"_cryptDecrypt";
 		hDestinationFile = CreateFile(dstName.c_str(), FILE_WRITE_DATA, FILE_SHARE_READ, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
@@ -949,7 +948,7 @@ extern "C" BOOL WINAPI __stdcall myCryptEncrypt(
 	HMODULE hModule = ::LoadLibrary(L"advapi32_.dll");
 	cryptEncrypt cE = NULL;
 
-	if (file_exists("advapi32_config_dump_cryptEncrypt") && dwBufLen > 0){
+	if (file_exists(L"advapi32_config_dump_cryptEncrypt") && dwBufLen > 0){
 		HANDLE hDestinationFile = INVALID_HANDLE_VALUE;
 		wstring dstName = L".\\packets_" + ::to_wstring(start_time) + L"\\" + ::to_wstring(CURR_PACKET++) + L"_cryptEncrypt";
 		hDestinationFile = CreateFile(dstName.c_str(), FILE_WRITE_DATA, FILE_SHARE_READ, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);

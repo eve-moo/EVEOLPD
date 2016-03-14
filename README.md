@@ -8,6 +8,7 @@
 #### How to use  
 1. We need to re-enable local dll loading in windows
   * `$ reg add "HKLM\SOFTWARE\Microsoft\WindowsNT\CurrentVersion\Image File Execution Options" /v DevOverrideEnable /t REG_DWORD /d 1`  
+  * Reboot. No seriously.
 2.  Download and build for release this repo
 3. Create an empty file in the eve/bin folder called `exefile.exe.local`
 4. Copy advapi32.dll to eve/bin as advapi32_.dll
