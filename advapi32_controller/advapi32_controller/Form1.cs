@@ -80,7 +80,7 @@ namespace advapi32_controller
                 // disabled, now enable
                 if (!File.Exists(EVE_DIR + "\\advapi32_config_dump_cryptDecrypt"))
                 {
-                    File.Create(EVE_DIR + "\\advapi32_config_dump_cryptDecrypt");
+                    File.Create(EVE_DIR + "\\advapi32_config_dump_cryptDecrypt").Close();
                     button2.BackColor = Color.LightGreen;
                     cryptDecrypt = true;
                 }
@@ -91,7 +91,7 @@ namespace advapi32_controller
 
                 if (!File.Exists(EVE_DIR + "\\advapi32_config_dump_cryptEncrypt"))
                 {
-                    File.Create(EVE_DIR + "\\advapi32_config_dump_cryptEncrypt");
+                    File.Create(EVE_DIR + "\\advapi32_config_dump_cryptEncrypt").Close();
                     button3.BackColor = Color.LightGreen;
                     cryptEncrypt = true;
                 }
@@ -123,7 +123,7 @@ namespace advapi32_controller
                 // enable
                 if (!File.Exists(EVE_DIR + "\\advapi32_config_dump_cryptDecrypt"))
                 {
-                    File.Create(EVE_DIR + "\\advapi32_config_dump_cryptDecrypt");
+                    File.Create(EVE_DIR + "\\advapi32_config_dump_cryptDecrypt").Close();
                     button2.BackColor = Color.LightGreen;
                     cryptDecrypt = true;
                 }
@@ -154,7 +154,7 @@ namespace advapi32_controller
                 // enable
                 if (!File.Exists(EVE_DIR + "\\advapi32_config_dump_cryptEncrypt"))
                 {
-                    File.Create(EVE_DIR + "\\advapi32_config_dump_cryptEncrypt");
+                    File.Create(EVE_DIR + "\\advapi32_config_dump_cryptEncrypt").Close();
                     button3.BackColor = Color.LightGreen;
                     cryptEncrypt = true;
                 }
