@@ -16,6 +16,10 @@ for i in os.listdir(PACKET_DIR):
         raw_file = open(PACKET_DIR + i + '.eve', 'wb')
         raw_file.write(raw)
         raw_file.close()
+        # OK this is actually not being sent over the network.
+        # it seems to be an after effect of late loading from code.ccp
+        # Keeping it in as it marks that the file was processed correctly
+        # though it is not related to the network protocol at all.
         if ord(raw[0]) == 3:
             uncompyle2.uncompyle_file(PACKET_DIR + i + '.eve', open(PACKET_DIR + i + '.eve.py', 'w'))
     except zlib.error:
