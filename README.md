@@ -18,4 +18,6 @@
 6. Build the control 'app' and direct it to the eve/bin folder
 7. Run exefile.exe and once loaded fully enable both incomming and outgoing packet logging
 
-Packets will be output to eve/bin/packets_{time_since_epoch_at_eve_start}
+Packets will be output to 
+    C:\packets_<time_since_epoch>\<bluetime>-<enc/dec>-<count>.everaw
+    
