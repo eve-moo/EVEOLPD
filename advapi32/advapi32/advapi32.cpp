@@ -3,6 +3,7 @@
 #include <windows.h>
 #include <wincrypt.h>
 #include <fstream>
+#include <inttypes.h>
 #include <string>
 #include <time.h>
 
@@ -866,19 +867,32 @@ using namespace std;
 ofstream	log_file;
 
 time_t start_time;
+wstring save_dir = L"C:\\packets_";
 typedef unsigned __int64 u64;
 
 u64 CURR_PACKET = 1;
 
-
+u64 BlueTime()
+{
+	FILETIME ft;
+	GetSystemTimeAsFileTime(&ft);
+	return (u64(ft.dwHighDateTime) << 32 | u64(ft.dwLowDateTime));
+}
 
 BOOL WINAPI DllMain(HINSTANCE hInst, DWORD reason, LPVOID)
 {
 	if (reason == DLL_PROCESS_ATTACH) {
 		log_file.open("advapi32_log.bin", ios::out | ios::app);
+
+		//// Validate we are running under exefile.exe
+		//TCHAR loadedPath[MAX_PATH + 1];
+		//GetModuleFileName(NULL, loadedPath, MAX_PATH + 1);
+		//std::wstring str(loadedPath);
+		//std::size_t found = str.find_last_of("\\");
+
 		start_time = time(0);
-		wstring dstFolder = L".\\packets_" + ::to_wstring(start_time);
-		CreateDirectory(dstFolder.c_str(), NULL);
+		save_dir.append(::to_wstring(start_time) + L"\\");
+		CreateDirectory(save_dir.c_str(), NULL);
 	}
 	if (reason == DLL_PROCESS_DETACH){
 		if (log_file.is_open())
@@ -889,7 +903,7 @@ BOOL WINAPI DllMain(HINSTANCE hInst, DWORD reason, LPVOID)
 
 // Hacky i know, shoot me, im a python guy!
 bool file_exists(LPCWSTR filename){
-    return GetFileAttributes(filename) != INVALID_FILE_ATTRIBUTES;
+	return GetFileAttributes(filename) != INVALID_FILE_ATTRIBUTES;
 }
 
 extern "C" BOOL WINAPI __stdcall myCryptDecrypt(
@@ -921,7 +935,8 @@ extern "C" BOOL WINAPI __stdcall myCryptDecrypt(
 
 	if (file_exists(L"advapi32_config_dump_cryptDecrypt")){
 		HANDLE hDestinationFile = INVALID_HANDLE_VALUE;
-		wstring dstName = L".\\packets_" + ::to_wstring(start_time) +L"\\"+ ::to_wstring(CURR_PACKET++) + L"_cryptDecrypt";
+		wstring dstName = save_dir + ::to_wstring(BlueTime()) + L"-dec-" + ::to_wstring(CURR_PACKET++) + L".everaw";
+
 		hDestinationFile = CreateFile(dstName.c_str(), FILE_WRITE_DATA, FILE_SHARE_READ, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 		WriteFile(
 			hDestinationFile,
@@ -950,7 +965,8 @@ extern "C" BOOL WINAPI __stdcall myCryptEncrypt(
 
 	if (file_exists(L"advapi32_config_dump_cryptEncrypt") && dwBufLen > 0){
 		HANDLE hDestinationFile = INVALID_HANDLE_VALUE;
-		wstring dstName = L".\\packets_" + ::to_wstring(start_time) + L"\\" + ::to_wstring(CURR_PACKET++) + L"_cryptEncrypt";
+		wstring dstName = save_dir + ::to_wstring(BlueTime()) + L"-enc-" + ::to_wstring(CURR_PACKET++) + L".everaw";
+		
 		hDestinationFile = CreateFile(dstName.c_str(), FILE_WRITE_DATA, FILE_SHARE_READ, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 		WriteFile(
 			hDestinationFile,
