@@ -14,11 +14,11 @@ namespace eveMarshal
             // ASCII encoding replaces non-ascii with question marks, so we use UTF8 to see if multi-byte sequences are there
             return Encoding.UTF8.GetByteCount(value) == value.Length;
         }
-        
-        public static string Print(PyObject obj)
+
+        public static string Print(PyObject obj, int indention = 0)
         {
             var ret = new StringBuilder();
-            Print(ret, 0, obj);
+            Print(ret, indention, obj);
             return ret.ToString();
         }
 
@@ -29,7 +29,7 @@ namespace eveMarshal
                 indent += Indention;
 
             if (obj is PyString)
-                builder.AppendLine(PrintString(obj as PyString, indent) + PrintRawData(obj));
+                builder.AppendLine(PrintString(obj as PyString, indent, indention) + PrintRawData(obj));
             else if (obj is PyNone)
                 builder.AppendLine(indent + PrintNone(obj as PyNone) + PrintRawData(obj));
             else if (obj is PyFloat)
@@ -230,15 +230,32 @@ namespace eveMarshal
             return hex.Replace("-", "");
         }
 
-        private static string PrintString(PyString str, string indention)
+        private static string PrintString(PyString str, string indention, int indent)
         {
+            if (str.Raw.Length > 0 && str.Raw[0] == (byte)120)
+            {
+                // We have serialized python data, decode and display it.
+                string python = "";
+                try
+                {
+                    Unmarshal un = new Unmarshal();
+                    PyObject obj = un.Process(str.Raw);
+                    python = PrettyPrinter.Print(obj, indent + 1);
+                }
+                catch (Exception e)
+                {
+                    python = "";
+                }
+                if (python.Length > 0)
+                    return indention + "[PyString " + Environment.NewLine + python + indention + "]";
+            }
             if (!containsBinary(str.Raw))
             {
                 return indention + "[PyString \"" + str.Value + "\"]";
             }
             else
             {
-                return indention + "[PyString <binary len=" + str.Value.Length + "> hex=\""+ByteArrayToString(str.Raw)+"\"]";
+                return indention + "[PyString \"" + str.Value + "\"" + Environment.NewLine + indention + "          <binary len=" + str.Value.Length + "> hex=\"" + ByteArrayToString(str.Raw) + "\"]";
             }
         }
 
@@ -257,7 +274,5 @@ namespace eveMarshal
             return "[PyNone]";
         }
     }
-
-
 
 }

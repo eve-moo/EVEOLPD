@@ -21,6 +21,11 @@ namespace MarshalUtil
 
         private void button1_Click(object sender, EventArgs e)
         {
+            if (txtInput.Text.Length == 0)
+            {
+                txtOutput.Text = "";
+                return;
+            }
             string hex = txtInput.Text.Replace(" ", "").Replace(System.Environment.NewLine, "");
             try
             {
@@ -36,8 +41,10 @@ namespace MarshalUtil
                 //PyObject obj = un.Process(BinaryReader.);
                 PyObject obj = un.Process(raw);
                 txtOutput.Text = PrettyPrinter.Print(obj);
-            }catch {
-                hex = txtInput.Text.Substring(8, txtInput.Text.Length-8).Replace(" ", "").Replace(System.Environment.NewLine, "");
+            }
+            catch
+            {
+                hex = txtInput.Text.Substring(8, txtInput.Text.Length - 8).Replace(" ", "").Replace(System.Environment.NewLine, "");
                 byte[] raw = new Byte[hex.Length / 2];
                 for (int i = 0; i < raw.Length; i++)
                 {

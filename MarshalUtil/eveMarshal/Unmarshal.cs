@@ -66,7 +66,7 @@ namespace eveMarshal
         private PyObject CreateAndDecode<T>(BinaryReader reader, MarshalOpcode op) where T : PyObject, new()
         {
             // -1 for the opcode
-            var ret = new T {RawOffset = reader.BaseStream.Position - 1};
+            var ret = new T { RawOffset = reader.BaseStream.Position - 1 };
             ret.Decode(this, op, reader);
             if (PyObject.EnableInspection)
             {
@@ -167,7 +167,7 @@ namespace eveMarshal
                     ret = SavedElements[index - 1];
                     if (NeedObjectEx && !(ret is PyObjectEx))
                     {
-                        ret = SavedElements[SavedElementsMap[(int)index]];
+                        ret = SavedElements[SavedElementsMap[(int)index] - 1];
                         if (!(ret is PyObjectEx))
                         {
                             // ok, this is seriously bad. our last way out is to search for an ObjectEx
