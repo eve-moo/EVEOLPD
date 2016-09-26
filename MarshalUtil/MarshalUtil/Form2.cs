@@ -36,7 +36,7 @@ namespace MarshalUtil
                 lastPath = fbd.SelectedPath;
                 evePathTxtBox.Text = fbd.SelectedPath;
                 btnProcess.Enabled = true;
-                PACKET_FILES = Directory.GetFiles(fbd.SelectedPath, "*.eve", SearchOption.TopDirectoryOnly);
+                PACKET_FILES = Directory.GetFiles(fbd.SelectedPath, "*.eve*", SearchOption.TopDirectoryOnly);
                 // Make sure packets are in order.
                 Array.Sort<string>(PACKET_FILES);
                 if (singleFile.Checked)
@@ -67,6 +67,17 @@ namespace MarshalUtil
             }
             using (var f = File.Open(filename, FileMode.Open))
             {
+                if(f.Length == 0)
+                {
+                    if (totalWriter != null)
+                    {
+                        // Write the filename.
+                        totalWriter.WriteLine(Path.GetFileName(filename));
+                        // Write the decoded file.
+                        totalWriter.WriteLine("Zero Length file.");
+                    }
+                    return true;
+                }
                 byte[] data = new byte[f.Length];
                 f.Read(data, 0, (int)f.Length);
                 // Is this a compressed file?
