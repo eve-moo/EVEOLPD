@@ -9,8 +9,8 @@
         None,
         Token,
         Float,
-        LongLong,
         Long,
+        Int,
         SignedShort,
         Byte,
         Buffer,
@@ -24,6 +24,17 @@
         PackedRow,
         SubStruct,
         RawData,
+
+        Address,
+        Packet
+    }
+
+    public enum PyAddressType
+    {
+        Node = 1,
+        Client = 2,
+        Broadcast = 4,
+        Any = 8
     }
 
 }

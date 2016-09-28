@@ -7,7 +7,7 @@ namespace eveMarshal
 
     public static class PrettyPrinter
     {
-        public const string Indention = "    ";
+        public const string Spacer = "    ";
 
         public static bool IsASCII(this string value)
         {
@@ -26,18 +26,38 @@ namespace eveMarshal
         {
             var indent = "";
             for (int i = 0; i < indention; i++)
-                indent += Indention;
+            {
+                indent += Spacer;
+            }
 
             if (obj is PyString)
+            {
                 builder.AppendLine(PrintString(obj as PyString, indent, indention) + PrintRawData(obj));
+            }
+            else if(obj is PyAddress)
+            {
+                builder.AppendLine(indent + PrintAddress(obj as PyAddress));
+            }
+            else if(obj is PyPacket)
+            {
+                builder.AppendLine(PrintPacket(obj as PyPacket, indent, indention));
+            }
             else if (obj is PyNone)
+            {
                 builder.AppendLine(indent + PrintNone(obj as PyNone) + PrintRawData(obj));
+            }
             else if (obj is PyFloat)
+            {
                 builder.AppendLine(indent + PrintFloat(obj as PyFloat) + PrintRawData(obj));
+            }
             else if (obj is PyInt)
+            {
                 builder.AppendLine(indent + PrintInt(obj as PyInt) + PrintRawData(obj));
+            }
             else if (obj is PyIntegerVar)
+            {
                 builder.AppendLine(indent + PrintIntegerVar(obj as PyIntegerVar) + PrintRawData(obj));
+            }
             else if (obj is PyTuple)
             {
                 var tuple = obj as PyTuple;
@@ -53,9 +73,13 @@ namespace eveMarshal
                     Print(builder, indention + 1, item);
             }
             else if (obj is PyLongLong)
+            {
                 builder.AppendLine(indent + PrintLongLong(obj as PyLongLong) + PrintRawData(obj));
+            }
             else if (obj is PyBuffer)
+            {
                 builder.AppendLine(indent + PrintBuffer(obj as PyBuffer) + PrintRawData(obj));
+            }
             else if (obj is PyObjectData)
             {
                 var objdata = obj as PyObjectData;
@@ -103,12 +127,12 @@ namespace eveMarshal
                 {
                     foreach (var column in packedRow.Columns)
                     {
-                        builder.AppendLine(indent + Indention + "[\"" + column.Name + "\" => " + column.Value +
+                        builder.AppendLine(indent + Spacer + "[\"" + column.Name + "\" => " + column.Value +
                                            " [" + column.Type + "]]");
                     }
                 }
                 else
-                    builder.AppendLine(indent + Indention + "[Columns parsing failed!]");
+                    builder.AppendLine(indent + Spacer + "[Columns parsing failed!]");
             }
             else if (obj is PyBool)
             {
@@ -242,7 +266,7 @@ namespace eveMarshal
                     PyObject obj = un.Process(str.Raw);
                     python = PrettyPrinter.Print(obj, indent + 1);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     python = "";
                 }
@@ -257,6 +281,53 @@ namespace eveMarshal
             {
                 return indention + "[PyString \"" + str.Value + "\"" + Environment.NewLine + indention + "          <binary len=" + str.Value.Length + "> hex=\"" + ByteArrayToString(str.Raw) + "\"]";
             }
+        }
+
+        private static string PrintAddress(PyAddress addr)
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.Append("[PyAddress " + addr.addrType.ToString());
+            string sep = ": ";
+            if(addr.addrType != PyAddressType.Broadcast)
+            {
+                if (addr.callID > 0)
+                {
+                    builder.Append(sep + "callID=" + addr.callID);
+                    sep = ", ";
+                }
+                if (addr.service != null && addr.service.Length > 0)
+                {
+                    builder.Append(sep + "service='" + addr.service + "'");
+                    sep = ", ";
+                }
+            }
+            switch (addr.addrType)
+            {
+                case PyAddressType.Node:
+                case PyAddressType.Client:
+                    builder.Append(sep + "nodeID=" + addr.addrID);
+                    break;
+                case PyAddressType.Broadcast:
+                    builder.Append(sep + "broadcastType='" + addr.broadcastType + "', idType='" + addr.service + "'");
+                    break;
+            }
+            builder.Append("]");
+            return builder.ToString();
+        }
+
+        private static string PrintPacket(PyPacket packet, string indention, int indent)
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.AppendLine(indention + "[PyPacket typeID=" + packet.packetType + "  userID=" + packet.userID + "  name='" + packet.typeString + "']");
+            builder.AppendLine(indention + Spacer + "[Source]");
+            Print(builder, indent + 2, packet.source);
+            builder.AppendLine(indention + Spacer + "[Destination]");
+            Print(builder, indent + 2, packet.dest);
+            builder.AppendLine(indention + Spacer + "[Payload]");
+            Print(builder, indent + 2, packet.payload);
+            builder.AppendLine(indention + Spacer + "[Named Payload]");
+            Print(builder, indent + 2, packet.namedPayload);
+            return builder.ToString();
         }
 
         private static bool containsBinary(byte[] p)

@@ -48,6 +48,7 @@
     <Compile Include="MarshalData.cs" />
     <Compile Include="MarshalOpcode.cs" />
     <Compile Include="PrettyPrinter.cs" />
+    <Compile Include="PyAddress.cs" />
     <Compile Include="PyBool.cs" />
     <Compile Include="PyBuffer.cs" />
     <Compile Include="PyChecksumedStream.cs" />
@@ -63,6 +64,7 @@
     <Compile Include="PyObjectEx.cs" />
     <Compile Include="PyObjectType.cs" />
     <Compile Include="PyPackedRow.cs" />
+    <Compile Include="PyPacket.cs" />
     <Compile Include="PyRawData.cs" />
     <Compile Include="PyString.cs" />
     <Compile Include="PySubStream.cs" />

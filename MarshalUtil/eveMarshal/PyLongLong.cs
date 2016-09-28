@@ -8,13 +8,13 @@ namespace eveMarshal
         public long Value { get; private set; }
 
         public PyLongLong()
-            : base(PyObjectType.LongLong)
+            : base(PyObjectType.Long)
         {
             
         }
 
         public PyLongLong(long val)
-            : base(PyObjectType.LongLong)
+            : base(PyObjectType.Long)
         {
             Value = val;
         }

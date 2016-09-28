@@ -104,6 +104,7 @@ namespace MarshalUtil
                     Unmarshal un = new Unmarshal();
                     PyObject obj = un.Process(data);
                     decodeDone = true;
+                    obj = analyse(obj);
                     string decoded = PrettyPrinter.Print(obj);
                     if (totalWriter != null)
                     {
@@ -168,6 +169,26 @@ namespace MarshalUtil
                 totalWriter.Close();
                 totalWriter = null;
             }
+        }
+
+        /*
+        Attempt to analyse
+        */
+        public PyObject analyse(PyObject obj)
+        {
+            if(obj.Type == PyObjectType.ObjectData)
+            {
+                PyObjectData packetData = obj as PyObjectData;
+                try
+                {
+                    return new PyPacket(packetData);
+                }
+                catch (InvalidDataException)
+                {
+                    return obj;
+                }
+            }
+            return obj;
         }
     }
 }

@@ -8,13 +8,13 @@ namespace eveMarshal
         public int Value { get; private set; }
 
         public PyInt()
-            : base(PyObjectType.Long)
+            : base(PyObjectType.Int)
         {
             
         }
 
         public PyInt(int val)
-            : base(PyObjectType.Long)
+            : base(PyObjectType.Int)
         {
             Value = val;
         }
