@@ -99,6 +99,19 @@ namespace eveMarshal
             return sb.ToString();
         }
 
+        public override string dump(string prefix)
+        {
+            StringBuilder builder = new StringBuilder();
+            string pfx1 = prefix + PrettyPrinter.Spacer;
+            builder.AppendLine("[PyDict " + Dictionary.Count + " kvp]" + PrettyPrinter.PrintRawData(this));
+            foreach (var kvp in Dictionary)
+            {
+                PrettyPrinter.Print(builder, pfx1 + "Key:", kvp.Key);
+                PrettyPrinter.Print(builder, pfx1 + "==Value:", kvp.Value);
+            }
+            return builder.ToString();
+        }
+
     }
 
 }

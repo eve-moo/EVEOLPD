@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Text;
 
 namespace eveMarshal
 {
@@ -52,6 +53,20 @@ namespace eveMarshal
         public override string ToString()
         {
             return "<SubStream: " + Data + ">";
+        }
+
+        public override string dump(string prefix)
+        {
+            StringBuilder builder = new StringBuilder();
+            if (RawData != null)
+            {
+                builder.AppendLine("[PySubStream " + RawData.Length + " bytes]");
+            }
+            else {
+                builder.AppendLine("[PySubStream]");
+            }
+            PrettyPrinter.Print(builder, prefix + PrettyPrinter.Spacer, Data);
+            return builder.ToString();
         }
 
     }

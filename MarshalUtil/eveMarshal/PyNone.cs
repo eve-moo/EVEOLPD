@@ -20,6 +20,11 @@ namespace eveMarshal
         {
             output.WriteOpcode(MarshalOpcode.None);
         }
+
+        public override string dump(string prefix)
+        {
+            return "[PyNone]";
+        }
     }
 
 }

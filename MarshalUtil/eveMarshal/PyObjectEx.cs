@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Text;
 
 namespace eveMarshal
 {
@@ -66,6 +67,29 @@ namespace eveMarshal
             // dict
             output.Write(PackedTerminator);
         }
+
+        public override string dump(string prefix)
+        {
+            string pfx1 = prefix + PrettyPrinter.Spacer;
+            string pfx2 = pfx1 + PrettyPrinter.Spacer;
+            StringBuilder builder = new StringBuilder();
+            builder.AppendLine("[PyObjectEx " + (IsType2 ? "Type2" : "Normal") + "]" + PrettyPrinter.PrintRawData(this));
+            builder.AppendLine(pfx1 + "Header:");
+            PrettyPrinter.Print(builder, pfx2, Header);
+            builder.AppendLine(pfx1 + "List:");
+            foreach (var item in List)
+            {
+                PrettyPrinter.Print(builder, pfx2, item);
+            }
+            builder.AppendLine(pfx1 + "Dictionary:");
+            foreach (var kvp in Dictionary)
+            {
+                PrettyPrinter.Print(builder, pfx2 + "Key:", kvp.Key);
+                PrettyPrinter.Print(builder, pfx2 + "==Value:", kvp.Value);
+            }
+            return builder.ToString();
+        }
+
     }
 
 }

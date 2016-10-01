@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Text;
 
 namespace eveMarshal
 {
@@ -23,6 +24,15 @@ namespace eveMarshal
             output.WriteOpcode(MarshalOpcode.SubStruct);
             Definition.Encode(output);
         }
+
+        public override string dump(string prefix)
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.AppendLine("[PySubStruct]");
+            PrettyPrinter.Print(builder, prefix + PrettyPrinter.Spacer, Definition);
+            return builder.ToString();
+        }
+
     }
 
 }

@@ -32,6 +32,11 @@ namespace eveMarshal
         {
             output.Write(Data);
         }
+        public override string dump(string prefix)
+        {
+            return PrettyPrinter.PrintRawData(this);
+        }
+
     }
 
 }

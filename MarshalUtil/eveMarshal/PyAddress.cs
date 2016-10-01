@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Text;
 
 namespace eveMarshal
 {
@@ -100,5 +101,36 @@ namespace eveMarshal
             throw new InvalidOperationException("Function Not Implemented.");
         }
 
+        public override string dump(string prefix)
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.Append("[PyAddress " + addrType.ToString());
+            string sep = ": ";
+            if (addrType != PyAddressType.Broadcast)
+            {
+                if (callID > 0)
+                {
+                    builder.Append(sep + "callID=" + callID);
+                    sep = ", ";
+                }
+                if (service != null && service.Length > 0)
+                {
+                    builder.Append(sep + "service='" + service + "'");
+                    sep = ", ";
+                }
+            }
+            switch (addrType)
+            {
+                case PyAddressType.Node:
+                case PyAddressType.Client:
+                    builder.Append(sep + "nodeID=" + addrID);
+                    break;
+                case PyAddressType.Broadcast:
+                    builder.Append(sep + "broadcastType='" + broadcastType + "', idType='" + service + "'");
+                    break;
+            }
+            builder.Append("]");
+            return builder.ToString();
+        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System.Data;
 using System.IO;
+using System.Text;
 
 namespace eveMarshal
 {
@@ -38,6 +39,15 @@ namespace eveMarshal
             new PyString(Name).Encode(output);
             Arguments.Encode(output);
         }
+
+        public override string dump(string prefix)
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.AppendLine("[PyObjectData Name: " + Name + "]" + PrettyPrinter.PrintRawData(this));
+            PrettyPrinter.Print(builder, prefix + PrettyPrinter.Spacer, Arguments);
+            return builder.ToString();
+        }
+
     }
-    
+
 }

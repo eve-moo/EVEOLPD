@@ -44,6 +44,10 @@ namespace eveMarshal
             else
                 throw new InvalidDataException("Fill either RawToken or Token with data for encoding");
         }
-    }
+        public override string dump(string prefix)
+        {
+            return "[PyToken " + Token + "]" + PrettyPrinter.PrintRawData(this);
+        }
+   }
 
 }

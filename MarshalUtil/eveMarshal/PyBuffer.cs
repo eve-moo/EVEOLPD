@@ -44,6 +44,14 @@ namespace eveMarshal
         {
             return "<" + BitConverter.ToString(Data) + ">";
         }
+
+        public override string dump(string prefix)
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.AppendLine(prefix + "[PyBuffer " + Data.Length + " bytes]" + PrettyPrinter.PrintRawData(this));
+            return builder.ToString();
+        }
+
     }
 
 }

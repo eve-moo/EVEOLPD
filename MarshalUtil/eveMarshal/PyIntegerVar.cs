@@ -81,6 +81,11 @@ namespace eveMarshal
             output.WriteSizeEx(Raw.Length);
             output.Write(Raw);
         }
+
+        public override string dump(string prefix)
+        {
+            return "[PyIntegerVar " + IntValue + "]";
+        }
     }
 
 }

@@ -48,6 +48,10 @@ namespace eveMarshal
         {
             return "<" + Value + ">";
         }
+        public override string dump(string prefix)
+        {
+            return "[PyBool " + Value + "]";
+        }
     }
 
 }

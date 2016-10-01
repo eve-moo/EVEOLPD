@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using eveMarshal.Database;
 using System.Linq;
+using System.Text;
 
 namespace eveMarshal
 {
@@ -185,6 +186,26 @@ namespace eveMarshal
         {
             throw new NotImplementedException();
         }
+
+        public override string dump(string prefix)
+        {
+            StringBuilder builder = new StringBuilder();
+            string pfx1 = prefix + PrettyPrinter.Spacer;
+            builder.AppendLine("[PyPackedRow " + RawData.Length + " bytes]");
+            if (Columns != null)
+            {
+                foreach (var column in Columns)
+                {
+                    builder.AppendLine(pfx1 + "[\"" + column.Name + "\" => " + " [" + column.Type + "] " + column.Value + "]");
+                }
+            }
+            else
+            {
+                builder.AppendLine(pfx1 + "[Columns parsing failed!]");
+            }
+            return builder.ToString();
+        }
+
     }
 
 }

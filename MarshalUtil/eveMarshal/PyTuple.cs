@@ -100,6 +100,24 @@ namespace eveMarshal
         {
             return GetEnumerator();
         }
+
+        public override string dump(string prefix)
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.AppendLine("[PyTuple " + Items.Count + " items]" + PrettyPrinter.PrintRawData(this));
+            foreach (var item in Items)
+            {
+                if (item != null)
+                {
+                    PrettyPrinter.Print(builder, prefix + PrettyPrinter.Spacer, item);
+                }
+                else
+                {
+                    builder.AppendLine("<nullptr>");
+                }
+            }
+            return builder.ToString();
+        }
     }
 
 }

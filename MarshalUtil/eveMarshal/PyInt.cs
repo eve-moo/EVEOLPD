@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Text;
 
 namespace eveMarshal
 {
@@ -63,6 +64,11 @@ namespace eveMarshal
         public override string ToString()
         {
             return "<" + Value + ">";
+        }
+
+        public override string dump(string prefix)
+        {
+            return "[PyInt " + Value + "]";
         }
     }
 

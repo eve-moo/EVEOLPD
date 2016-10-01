@@ -83,6 +83,18 @@ namespace eveMarshal
         {
             return GetEnumerator();
         }
+
+        public override string dump(string prefix)
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.AppendLine("[PyList " + Items.Count + " items]" + PrettyPrinter.PrintRawData(this));
+            foreach (var item in Items)
+            {
+                PrettyPrinter.Print(builder, prefix + PrettyPrinter.Spacer, item);
+            }
+            return builder.ToString();
+        }
+
     }
 
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Text;
 
 namespace eveMarshal
 {
@@ -128,10 +129,23 @@ namespace eveMarshal
             }
         }
 
+        public bool isIntNumber
+        {
+            get
+            {
+                if (this is PyInt || this is PyLongLong || this is PyIntegerVar)
+                {
+                    return true;
+                }
+                return false;
+            }
+        }
         public override string ToString()
         {
             return "<" + Type + ">";
         }
+
+        public abstract string dump(string prefix);
     }
 
 }

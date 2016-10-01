@@ -25,6 +25,7 @@
         SubStruct,
         RawData,
 
+        Extended,
         Address,
         Packet
     }

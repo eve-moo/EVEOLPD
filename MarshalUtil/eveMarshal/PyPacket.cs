@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Text;
 
 namespace eveMarshal
 {
@@ -81,6 +82,21 @@ namespace eveMarshal
         {
             throw new InvalidOperationException("Function Not Implemented.");
         }
-
+        public override string dump(string prefix)
+        {
+            string pfx1 = prefix + PrettyPrinter.Spacer;
+            string pfx2 = pfx1 + PrettyPrinter.Spacer;
+            StringBuilder builder = new StringBuilder();
+            builder.AppendLine("[PyPacket typeID=" + packetType + "  userID=" + userID + "  name='" + typeString + "']");
+            builder.AppendLine(pfx1 + "[Source]");
+            PrettyPrinter.Print(builder, pfx2, source);
+            builder.AppendLine(pfx1 + "[Destination]");
+            PrettyPrinter.Print(builder, pfx2, dest);
+            builder.AppendLine(pfx1 + "[Payload]");
+            PrettyPrinter.Print(builder, pfx2, payload);
+            builder.AppendLine(pfx1 + "[Named Payload]");
+            PrettyPrinter.Print(builder, pfx2, namedPayload);
+            return builder.ToString();
+        }
     }
 }
