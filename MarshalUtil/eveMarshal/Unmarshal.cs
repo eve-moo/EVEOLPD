@@ -75,10 +75,6 @@ namespace eveMarshal
                 ret.RawSource = reader.ReadBytes((int)(postOffset - ret.RawOffset));
             }
 
-            // lets just get rid of those here and now
-            if (ret is PySubStream)
-                return (ret as PySubStream).Data;
-
             return ret;
         }
 
