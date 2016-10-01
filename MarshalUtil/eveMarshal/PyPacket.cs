@@ -1,4 +1,5 @@
-﻿using System;
+﻿using eveMarshal.Extended;
+using System;
 using System.IO;
 using System.Text;
 
@@ -63,6 +64,25 @@ namespace eveMarshal
             }
             RawOffset = args.RawOffset;
             RawSource = args.RawSource;
+            try
+            {
+                if (typeString.EndsWith(".SessionChangeNotification"))
+                {
+                    payload = new SessionChangeNotification(payload as PyTuple);
+                }
+                if (typeString.EndsWith(".CallRsp"))
+                {
+                    payload = new CallRsp(payload as PyTuple);
+                }
+                if (typeString.EndsWith(".CallReq"))
+                {
+                    payload = new PyCallStream(payload as PyTuple);
+                }
+            }
+            catch (InvalidDataException e)
+            {
+                throw new InvalidDataException("PyPacket: Extended decode failed: " + e.Message, e);
+            }
         }
 
         public override string ToString()
