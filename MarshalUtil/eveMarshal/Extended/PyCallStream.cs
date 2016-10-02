@@ -73,6 +73,11 @@ namespace eveMarshal.Extended
             {
                 throw new InvalidDataException("PyCallStream: Invalid argument dict, expected PyDict or PyNone got" + call.Items[3].Type);
             }
+            if(method == "MachoBindObject")
+            {
+                extended = new CallMachoBindObject(arg_tuple);
+                arg_tuple = null;
+            }
         }
 
         public override string dump(string prefix)
