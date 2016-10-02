@@ -24,6 +24,11 @@ namespace eveMarshal
 
         public static void Print(StringBuilder builder, string prefix, PyObject obj)
         {
+            if(obj == null)
+            {
+                builder.AppendLine("<nullptr>");
+                return;
+            }
             string pfx1 = prefix + Spacer;
             string pfx2 = pfx1 + Spacer;
             builder.AppendLine(prefix + obj.dump(prefix).TrimEnd('\r', '\n'));// + PrintRawData(obj));

@@ -120,7 +120,8 @@ namespace MarshalUtil
                 }
                 catch (Exception e)
                 {
-                    txtOutput.AppendText("Error: " + e.ToString() + System.Environment.NewLine);
+                    string err = "Error: " + e.ToString();
+                    txtOutput.AppendText(err + System.Environment.NewLine);
                     // We, had an error but should still produce some kind of notice in the output.
                     if (totalWriter != null)
                     {
@@ -128,6 +129,11 @@ namespace MarshalUtil
                         totalWriter.WriteLine(Path.GetFileName(filename));
                         // Write the decoded file.
                         totalWriter.WriteLine(decodeDone ? "Printer Error. " : "Decoder Error.");
+                        totalWriter.WriteLine(err);
+                    }
+                    else
+                    {
+                        File.WriteAllText(filename + ".txt", err);
                     }
                     return false;
                 }
@@ -159,7 +165,7 @@ namespace MarshalUtil
                 else
                 {
                     PACKET_FAILURE.Add(file);
-                    txtOutput.AppendText("F: " + file + System.Environment.NewLine);
+                    txtOutput.AppendText("Fail: " + file + System.Environment.NewLine);
                 }
                 i++;
                 progressBar1.Value = i;
