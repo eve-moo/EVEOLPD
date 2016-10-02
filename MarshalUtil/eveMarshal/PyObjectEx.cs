@@ -72,6 +72,7 @@ namespace eveMarshal
         {
             string pfx1 = prefix + PrettyPrinter.Spacer;
             string pfx2 = pfx1 + PrettyPrinter.Spacer;
+            string pfx3 = pfx2 + PrettyPrinter.Spacer + PrettyPrinter.Spacer;
             StringBuilder builder = new StringBuilder();
             builder.AppendLine("[PyObjectEx " + (IsType2 ? "Type2" : "Normal") + "]" + PrettyPrinter.PrintRawData(this));
             builder.AppendLine(pfx1 + "Header:");
@@ -85,7 +86,8 @@ namespace eveMarshal
             foreach (var kvp in Dictionary)
             {
                 PrettyPrinter.Print(builder, pfx2 + "Key:", kvp.Key);
-                PrettyPrinter.Print(builder, pfx2 + "==Value:", kvp.Value);
+                builder.AppendLine(pfx2 + "==Value:" + kvp.Value.dump(pfx3).TrimEnd('\r', '\n'));
+                //PrettyPrinter.Print(builder, pfx2 + "==Value:", kvp.Value);
             }
             return builder.ToString();
         }

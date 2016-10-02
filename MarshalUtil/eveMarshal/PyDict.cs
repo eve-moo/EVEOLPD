@@ -103,11 +103,13 @@ namespace eveMarshal
         {
             StringBuilder builder = new StringBuilder();
             string pfx1 = prefix + PrettyPrinter.Spacer;
+            string pfx2 = pfx1 + PrettyPrinter.Spacer + PrettyPrinter.Spacer;
             builder.AppendLine("[PyDict " + Dictionary.Count + " kvp]" + PrettyPrinter.PrintRawData(this));
             foreach (var kvp in Dictionary)
             {
                 PrettyPrinter.Print(builder, pfx1 + "Key:", kvp.Key);
-                PrettyPrinter.Print(builder, pfx1 + "==Value:", kvp.Value);
+                builder.AppendLine(pfx1 + "==Value:" + kvp.Value.dump(pfx2).TrimEnd('\r', '\n'));
+                //PrettyPrinter.Print(builder, pfx1 + "==Value:", kvp.Value);
             }
             return builder.ToString();
         }
