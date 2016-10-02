@@ -70,7 +70,7 @@ namespace eveMarshal
             else if (op == MarshalOpcode.WStringEmpty)
                 Update(new byte[0]);
             else if (op == MarshalOpcode.WStringUCS2)
-                Update(source.ReadBytes((int)source.ReadSizeEx()), true);
+                Update(source.ReadBytes((int)source.ReadSizeEx() * 2), true);
             else if (op == MarshalOpcode.StringShort)
                 Update(source.ReadBytes(source.ReadByte()));
             else if (op == MarshalOpcode.StringLong)
