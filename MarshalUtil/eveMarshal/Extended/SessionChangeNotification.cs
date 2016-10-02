@@ -5,7 +5,7 @@ using System.Text;
 
 namespace eveMarshal.Extended
 {
-    public class SessionChangeNotification : PyObject
+    public class SessionChangeNotification : ExtendedObject
     {
         Int32 sessionID;
         Int32 clueless;
@@ -13,7 +13,6 @@ namespace eveMarshal.Extended
         List<Int32> nodesOfInterest = new List<Int32>();
 
         public SessionChangeNotification(PyTuple payload)
-            :base(PyObjectType.Extended)
         {
             if (payload == null)
             {
@@ -53,16 +52,6 @@ namespace eveMarshal.Extended
             }
             Changes = tup1.Items[1] as PyDict;
             clueless = (Int32)tup1.Items[0].IntValue;
-        }
-
-        public override void Decode(Unmarshal context, MarshalOpcode op, BinaryReader source)
-        {
-            throw new InvalidOperationException("Function Not Implemented.");
-        }
-
-        protected override void EncodeInternal(BinaryWriter output)
-        {
-            throw new InvalidOperationException("Function Not Implemented.");
         }
 
         public override string dump(string prefix)

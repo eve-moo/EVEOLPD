@@ -4,16 +4,16 @@ using System.Text;
 
 namespace eveMarshal.Extended
 {
-    class PyCallStream : PyObject
+    class PyCallStream : ExtendedObject
     {
         Int64 remoteObject = 0;
         string remoteObjectStr = "";
         string method = "";
         PyTuple arg_tuple = null;
         PyDict arg_dict = null;
+        ExtendedObject extended = null;
 
         public PyCallStream(PyTuple payload)
-            : base(PyObjectType.Extended)
         {
             if(payload == null)
             {
@@ -75,16 +75,6 @@ namespace eveMarshal.Extended
             }
         }
 
-        public override void Decode(Unmarshal context, MarshalOpcode op, BinaryReader source)
-        {
-            throw new InvalidOperationException("Function Not Implemented.");
-        }
-
-        protected override void EncodeInternal(BinaryWriter output)
-        {
-            throw new InvalidOperationException("Function Not Implemented.");
-        }
-
         public override string dump(string prefix)
         {
             string pfx1 = prefix + PrettyPrinter.Spacer;
@@ -102,7 +92,14 @@ namespace eveMarshal.Extended
             }
             builder.AppendLine(pfx1 + "Method: '" + method + "'");
             builder.AppendLine(pfx1 + "Arguments:");
-            PrettyPrinter.Print(builder, pfx2, arg_tuple);
+            if (extended != null)
+            {
+                PrettyPrinter.Print(builder, pfx2, extended);
+            }
+            else
+            {
+                PrettyPrinter.Print(builder, pfx2, arg_tuple);
+            }
             if(arg_dict == null)
             {
                 builder.AppendLine(pfx1 + "Named Arguments: None");

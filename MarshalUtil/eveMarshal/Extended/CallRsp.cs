@@ -4,12 +4,11 @@ using System.Text;
 
 namespace eveMarshal.Extended
 {
-    public class CallRsp : PyObject
+    public class CallRsp : ExtendedObject
     {
         PyObject response;
 
         public CallRsp(PyTuple payload)
-            : base(PyObjectType.Extended)
         {
             if(payload == null)
             {
@@ -25,16 +24,6 @@ namespace eveMarshal.Extended
             }
             PySubStream sub = payload.Items[0] as PySubStream;
             response = sub.Data;
-        }
-
-        public override void Decode(Unmarshal context, MarshalOpcode op, BinaryReader source)
-        {
-            throw new InvalidOperationException("Function Not Implemented.");
-        }
-
-        protected override void EncodeInternal(BinaryWriter output)
-        {
-            throw new InvalidOperationException("Function Not Implemented.");
         }
 
         public override string dump(string prefix)
