@@ -163,16 +163,39 @@ namespace eveMarshal
                     ret = SavedElements[index - 1];
                     if (NeedObjectEx && !(ret is PyObjectEx))
                     {
-                        ret = SavedElements[SavedElementsMap[(int)index] - 1];
+                        // This should not be this complicated.... What's up doc?
+                        if (index < SavedElements.Length)
+                        {
+                            ret = SavedElements[index];
+                        }
                         if (!(ret is PyObjectEx))
                         {
-                            // ok, this is seriously bad. our last way out is to search for an ObjectEx
-                            foreach (var savedObj in SavedElements)
+                            if (SavedElementsMap.ContainsKey((int)index))
                             {
-                                if (savedObj is PyObjectEx)
+                                int mapIndex = SavedElementsMap[(int)index];
+                                if (mapIndex < SavedElements.Length)
                                 {
-                                    ret = savedObj;
-                                    break;
+                                    ret = SavedElements[mapIndex];
+                                }
+                                if (!(ret is PyObjectEx))
+                                {
+                                    ret = SavedElements[mapIndex - 1];
+                                }
+                            }
+                            if (!(ret is PyObjectEx))
+                            {
+                                ret = SavedElements[SavedElementsMap[(int)index - 1] - 1];
+                                if (!(ret is PyObjectEx))
+                                {
+                                    // ok, this is seriously bad. our last way out is to search for an ObjectEx
+                                    foreach (var savedObj in SavedElements)
+                                    {
+                                        if (savedObj is PyObjectEx)
+                                        {
+                                            ret = savedObj;
+                                            break;
+                                        }
+                                    }
                                 }
                             }
                         }
