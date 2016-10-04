@@ -17,6 +17,10 @@ namespace MarshalUtil
         public Form2()
         {
             InitializeComponent();
+            ToolTip ToolTip = new ToolTip();
+            ToolTip.SetToolTip(singleFile, "Output all packets to a single file.");
+            ToolTip = new ToolTip();
+            ToolTip.SetToolTip(this.packetSubDirs, "Proccess all directorys in the chosen directory as packet groups." + Environment.NewLine +"If single file is chosen one file will be created for each packet directory.");
         }
 
         string[] PACKET_FILES = new string[] { };
@@ -25,30 +29,41 @@ namespace MarshalUtil
         System.IO.StreamWriter totalWriter = null;
         string totalFile = "";
         string lastPath = "";
+        string workingDir = "";
 
         private void button1_Click(object sender, EventArgs e)
         {
             FolderBrowserDialog fbd = new FolderBrowserDialog();
             fbd.SelectedPath = lastPath;
-            fbd.ShowDialog();
-            if (fbd.SelectedPath != string.Empty)
+            if (fbd.ShowDialog() == DialogResult.OK)
             {
-                lastPath = fbd.SelectedPath;
-                evePathTxtBox.Text = fbd.SelectedPath;
-                btnProcess.Enabled = true;
-                PACKET_FILES = Directory.GetFiles(fbd.SelectedPath, "*.eve*", SearchOption.TopDirectoryOnly);
-                // Make sure packets are in order.
-                Array.Sort<string>(PACKET_FILES);
-                if (singleFile.Checked)
+                if (fbd.SelectedPath != string.Empty)
                 {
-                    totalFile = fbd.SelectedPath + ".txt";
+                    lastPath = fbd.SelectedPath;
+                    evePathTxtBox.Text = fbd.SelectedPath;
+                    btnProcess.Enabled = true;
+
+                    workingDir = fbd.SelectedPath;
+                    populateFileList();
+
+                    txtOutput.Lines = PACKET_FILES;
+                    progressBar1.Value = 0;
                 }
-                else
-                {
-                    totalFile = "";
-                }
-                txtOutput.Lines = PACKET_FILES;
-                progressBar1.Value = 0;
+            }
+        }
+
+        private void populateFileList()
+        {
+            PACKET_FILES = Directory.GetFiles(workingDir, "*.eve*", SearchOption.TopDirectoryOnly);
+            // Make sure packets are in order.
+            Array.Sort<string>(PACKET_FILES);
+            if (singleFile.Checked)
+            {
+                totalFile = workingDir + ".txt";
+            }
+            else
+            {
+                totalFile = "";
             }
         }
 
@@ -143,10 +158,38 @@ namespace MarshalUtil
 
         private void btnProcess_Click(object sender, EventArgs e)
         {
+            txtOutput.Clear();
+            if (!packetSubDirs.Checked)
+            {
+                progressBar2.Maximum = 1;
+                progressBar2.Value = 0;
+                workingDir = lastPath;
+                processWorkingDirectory();
+                progressBar2.Value = 1;
+            }
+            else
+            {
+                string[] dirs = Directory.GetDirectories(lastPath);
+                Array.Sort<string>(dirs);
+                progressBar2.Maximum = dirs.Length;
+                progressBar2.Value = 0;
+                foreach (string dir in dirs)
+                {
+                    workingDir = dir;
+                    populateFileList();
+                    string proc = "Processing directory " + (progressBar2.Value + 1) + " of " + dirs.Length;
+                    txtOutput.AppendText(proc + System.Environment.NewLine);
+                    processWorkingDirectory();
+                    progressBar2.Value++;
+                }
+            }
+        }
+
+        private void processWorkingDirectory()
+        {
             int i = 0;
             progressBar1.Value = 0;
             progressBar1.Maximum = PACKET_FILES.Length;
-            txtOutput.Clear();
             totalWriter = null;
             // If we have a totalFile create a totalWriter.
             if (totalFile.Length > 0)

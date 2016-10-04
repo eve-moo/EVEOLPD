@@ -108,7 +108,14 @@ namespace eveMarshal
             foreach (var kvp in Dictionary)
             {
                 PrettyPrinter.Print(builder, pfx1 + "Key:", kvp.Key);
-                builder.AppendLine(pfx1 + "==Value:" + kvp.Value.dump(pfx2).TrimEnd('\r', '\n'));
+                if (kvp.Value == null)
+                {
+                    builder.AppendLine(pfx1 + "==Value: <nullptr>");
+                }
+                else
+                {
+                    builder.AppendLine(pfx1 + "==Value:" + kvp.Value.dump(pfx2).TrimEnd('\r', '\n'));
+                }
                 //PrettyPrinter.Print(builder, pfx1 + "==Value:", kvp.Value);
             }
             return builder.ToString();
