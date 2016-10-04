@@ -30,7 +30,6 @@ namespace eveMarshal
 
         public override void Decode(Unmarshal context, MarshalOpcode op, BinaryReader source)
         {
-            context.NeedObjectEx = false;
             if (op == MarshalOpcode.ObjectEx2)
             {
                 IsType2 = true;

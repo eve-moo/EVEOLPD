@@ -18,9 +18,6 @@ namespace eveMarshal
 
         public bool DebugMode { get; set; }
 
-        // used to fix SavedStreamElement fuckups
-        public bool NeedObjectEx { get; set; }
-
         public Dictionary<int, int> SavedElementsMap { get; private set; }
         public PyObject[] SavedElements { get; private set; }
 
@@ -84,6 +81,13 @@ namespace eveMarshal
             //bool flagUnknown = (header & UnknownMask) > 0;
             bool flagSave = (header & SaveMask) > 0;
             var opcode = (MarshalOpcode)(header & OpcodeMask);
+            int saveIndex = 0;
+            if (flagSave)
+            {
+                // Get save index now.
+                // If there are nested saves the indexes will be wrong if we wait.
+                saveIndex = SavedElementsMap[_currentSaveIndex++];
+            }
             PyObject ret;
             //Console.WriteLine("OPCODE: "+opcode);
             switch (opcode)
@@ -161,46 +165,6 @@ namespace eveMarshal
                 case MarshalOpcode.SavedStreamElement:
                     uint index = reader.ReadSizeEx();
                     ret = SavedElements[index - 1];
-                    if (NeedObjectEx && !(ret is PyObjectEx))
-                    {
-                        // This should not be this complicated.... What's up doc?
-                        if (index < SavedElements.Length)
-                        {
-                            ret = SavedElements[index];
-                        }
-                        if (!(ret is PyObjectEx))
-                        {
-                            if (SavedElementsMap.ContainsKey((int)index))
-                            {
-                                int mapIndex = SavedElementsMap[(int)index];
-                                if (mapIndex < SavedElements.Length)
-                                {
-                                    ret = SavedElements[mapIndex];
-                                }
-                                if (!(ret is PyObjectEx))
-                                {
-                                    ret = SavedElements[mapIndex - 1];
-                                }
-                            }
-                            if (!(ret is PyObjectEx))
-                            {
-                                ret = SavedElements[SavedElementsMap[(int)index - 1] - 1];
-                                if (!(ret is PyObjectEx))
-                                {
-                                    // ok, this is seriously bad. our last way out is to search for an ObjectEx
-                                    foreach (var savedObj in SavedElements)
-                                    {
-                                        if (savedObj is PyObjectEx)
-                                        {
-                                            ret = savedObj;
-                                            break;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    NeedObjectEx = false;
                     break;
                 case MarshalOpcode.ObjectEx1:
                 case MarshalOpcode.ObjectEx2:
@@ -215,9 +179,15 @@ namespace eveMarshal
 
             if (flagSave)
             {
-                var nth = _currentSaveIndex++;
-                var saveIndex = SavedElementsMap[nth];
-                SavedElements[saveIndex - 1] = ret;
+                if(saveIndex == 0)
+                {
+                    // This only seams to occure in GPSTransport packets when the server shuts down.
+                    saveIndex = 1;
+                }
+                if (saveIndex > 0)
+                {
+                    SavedElements[saveIndex - 1] = ret;
+                }
             }
 
             if (DebugMode)

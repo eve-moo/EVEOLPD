@@ -10,7 +10,7 @@ namespace eveMarshal
 
     public class PyPackedRow : PyObject
     {
-        public PyObject Header { get; private set; }
+        public PyObjectEx Header { get; private set; }
         public byte[] RawData { get; private set; }
 
         public List<Column> Columns { get; private set; }
@@ -29,9 +29,12 @@ namespace eveMarshal
 
         public override void Decode(Unmarshal context, MarshalOpcode op, BinaryReader source)
         {
-            context.NeedObjectEx = true;
-            Header = context.ReadObject(source);
-            context.NeedObjectEx = false;
+            PyObject obj = context.ReadObject(source);
+            Header = obj as PyObjectEx;
+            if(Header == null)
+            {
+                throw new InvalidDataException("PyPackedRow: Header must be PyObjectEx got " + obj.Type);
+            }
             RawData = LoadZeroCompressed(source);
 
             if (!ParseRowData(context, source))
