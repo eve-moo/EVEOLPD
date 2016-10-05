@@ -1,4 +1,5 @@
-﻿using System;
+﻿using eveMarshal.Extended;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -197,13 +198,62 @@ namespace eveMarshal
                 Console.ReadLine();
             }
 
-            return ret;
+            return analyse(ret);
         }
 
         public static T Process<T>(byte[] data) where T : class
         {
             var un = new Unmarshal();
             return un.Process(data) as T;
+        }
+
+        private PyObject analyse(PyObject obj)
+        {
+            try
+            {
+                if (obj is PyObjectEx)
+                {
+                    PyObjectEx ex = obj as PyObjectEx;
+                    if (!ex.IsType2)
+                    {
+                        PyTuple headerTuple = ex.Header as PyTuple;
+                        if (headerTuple != null && headerTuple.Items.Count > 1)
+                        {
+                            PyToken token = headerTuple.Items[0] as PyToken;
+                            if (token != null)
+                            {
+                                if (token.Token == "__builtin__.set")
+                                {
+                                    PyTuple tuple = headerTuple.Items[1] as PyTuple;
+                                    if (tuple != null && tuple.Items.Count > 0)
+                                    {
+                                        return new BuiltinSet(tuple.Items[0] as PyList);
+                                    }
+                                }
+                                if (token.Token == "carbon.common.script.net.machoNetExceptions.WrongMachoNode")
+                                {
+                                    if(headerTuple.Items.Count == 3 && headerTuple.Items[2] is PyDict)
+                                    {
+                                        PyDict dict = headerTuple.Items[2] as PyDict;
+                                        return new WrongMachoNode(dict);
+                                    }
+                                }
+                                    //
+                                    //blue.DBRowDescriptor
+                                }
+                            }
+                    }
+                    // type 2
+                    //eve.common.script.dogma.effect.BrainEffect
+                    //carbon.common.script.sys.crowset.CRowset
+                    //carbon.common.script.sys.crowset.CIndexedRowset
+                }
+            }
+            catch (InvalidDataException)
+            {
+                return obj;
+            }
+            return obj;
         }
     }
 
