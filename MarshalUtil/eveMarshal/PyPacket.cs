@@ -78,6 +78,10 @@ namespace eveMarshal
                 {
                     payload = new PyCallStream(payload as PyTuple);
                 }
+                if (typeString.EndsWith(".ErrorResponse"))
+                {
+                    payload = new ErrorResponse(payload as PyTuple);
+                }
             }
             catch (InvalidDataException e)
             {

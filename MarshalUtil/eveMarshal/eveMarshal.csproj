@@ -44,6 +44,7 @@
     <Compile Include="Database\FieldType.cs" />
     <Compile Include="Extended\BuiltinSet.cs" />
     <Compile Include="Extended\CallMachoBindObject.cs" />
+    <Compile Include="Extended\ErrorResponse.cs" />
     <Compile Include="Extended\ExtendedObject.cs" />
     <Compile Include="Extended\PyCallStream.cs" />
     <Compile Include="Extended\CallRsp.cs" />
