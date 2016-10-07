@@ -24,13 +24,6 @@ namespace eveMarshal.Extended
             {
                 throw new InvalidDataException("CallMachoBindObject: Invalid tuple size expected 2 got" + payload.Items.Count);
             }
-            for (int i = 0; i < 2; i++)
-            {
-                if (!(payload.Items[1] is PyTuple))
-                {
-                    throw new InvalidDataException("CallMachoBindObject: Invalid tuple entry [" + i + "] expected PyTuple got " + payload.Items[i].Type);
-                }
-            }
             bindArgs = payload.Items[0];
             PyTuple tupleArgs = bindArgs as PyTuple;
             if(tupleArgs != null && tupleArgs.Items.Count == 2 && tupleArgs.Items[0].isIntNumber && tupleArgs.Items[1].isIntNumber)
@@ -45,18 +38,21 @@ namespace eveMarshal.Extended
                 bindArgs = null;
             }
             PyTuple tuple = payload.Items[1] as PyTuple;
-            if (tuple.Items.Count != 3)
+            if (tuple != null)
             {
-                throw new InvalidDataException("CallMachoBindObject: Invalid tuple size expected 3 got" + tuple.Items.Count);
+                if (tuple.Items.Count != 3)
+                {
+                    throw new InvalidDataException("CallMachoBindObject: Invalid tuple size expected 3 got" + tuple.Items.Count);
+                }
+                if (!(tuple.Items[0] is PyString) || !(tuple.Items[1] is PyTuple) || !(tuple.Items[2] is PyDict))
+                {
+                    throw new InvalidDataException("CallMachoBindObject: Invalid call structure, expected PyString, PyTuple, PyDict.  Got " +
+                        tuple.Items[0].Type + ", " + tuple.Items[1].Type + "," + tuple.Items[2].Type);
+                }
+                callMethod = tuple.Items[0].StringValue;
+                callTuple = tuple.Items[1] as PyTuple;
+                callDict = tuple.Items[2] as PyDict;
             }
-            if (!(tuple.Items[0] is PyString) || !(tuple.Items[1] is PyTuple) || !(tuple.Items[2] is PyDict))
-            {
-                throw new InvalidDataException("CallMachoBindObject: Invalid call structure, expected PyString, PyTuple, PyDict.  Got " +
-                    tuple.Items[0].Type + ", " + tuple.Items[1].Type + "," + tuple.Items[2].Type);
-            }
-            callMethod = tuple.Items[0].StringValue;
-            callTuple = tuple.Items[1] as PyTuple;
-            callDict = tuple.Items[2] as PyDict;
         }
 
         public override string dump(string prefix)
@@ -77,7 +73,7 @@ namespace eveMarshal.Extended
                 {
                     if (characterID == 0)
                     {
-                        builder.AppendLine("<nullptr>");
+                        builder.AppendLine(pfx2 + "<nullptr>");
                     }
                     else
                     {

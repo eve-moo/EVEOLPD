@@ -18,12 +18,19 @@ namespace eveMarshal.Extended
             {
                 throw new InvalidDataException("CallRsp: Invalid tuple size expected 1 got" + payload.Items.Count);
             }
-            if (!(payload.Items[0] is PySubStream))
+            if (payload.Items[0] is PyTuple)
             {
-                throw new InvalidDataException("CallRsp: No PySubStreeam.");
+                response = payload.Items[0];
             }
-            PySubStream sub = payload.Items[0] as PySubStream;
-            response = sub.Data;
+            else
+            {
+                if (!(payload.Items[0] is PySubStream))
+                {
+                    throw new InvalidDataException("CallRsp: No PySubStreeam.");
+                }
+                PySubStream sub = payload.Items[0] as PySubStream;
+                response = sub.Data;
+            }
         }
 
         public override string dump(string prefix)

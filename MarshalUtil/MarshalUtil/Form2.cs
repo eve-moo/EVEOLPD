@@ -119,7 +119,7 @@ namespace MarshalUtil
                     Unmarshal un = new Unmarshal();
                     PyObject obj = un.Process(data);
                     decodeDone = true;
-                    obj = analyse(obj);
+                    obj = analyse(obj, filename);
                     string decoded = PrettyPrinter.Print(obj);
                     if (totalWriter != null)
                     {
@@ -223,7 +223,7 @@ namespace MarshalUtil
         /*
         Attempt to analyse
         */
-        public PyObject analyse(PyObject obj)
+        public PyObject analyse(PyObject obj, string filename)
         {
             if(obj.Type == PyObjectType.ObjectData)
             {
@@ -232,8 +232,10 @@ namespace MarshalUtil
                 {
                     return new PyPacket(packetData);
                 }
-                catch (InvalidDataException)
+                catch (InvalidDataException e)
                 {
+                    txtOutput.AppendText(filename + Environment.NewLine);
+                    txtOutput.AppendText("Packet Decode failed: " + e.Message + Environment.NewLine);
                     return obj;
                 }
             }

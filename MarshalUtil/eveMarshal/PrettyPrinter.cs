@@ -26,7 +26,7 @@ namespace eveMarshal
         {
             if(obj == null)
             {
-                builder.AppendLine("<nullptr>");
+                builder.AppendLine(prefix + "<nullptr>");
                 return;
             }
             string pfx1 = prefix + Spacer;
