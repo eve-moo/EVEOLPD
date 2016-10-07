@@ -34,6 +34,9 @@ namespace eveMarshal.Database
         Bytes = 0x80,
         Str = 0x81,
         WStr = 0x82,
+
+        // Special for use with db row descriptor token types
+        Token = 0xff
     }
 
     public static class FieldTypeHelper
@@ -76,6 +79,9 @@ namespace eveMarshal.Database
                     // handled differently
                     return 0;
 
+                case FieldType.Token:
+                    // Special for use with db row descriptor token types
+                    return 0;
                 default:
                     throw new Exception("Invalid FieldType");
             }

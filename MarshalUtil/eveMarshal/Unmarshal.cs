@@ -232,16 +232,18 @@ namespace eveMarshal
                                 }
                                 if (token.Token == "carbon.common.script.net.machoNetExceptions.WrongMachoNode")
                                 {
-                                    if(headerTuple.Items.Count == 3 && headerTuple.Items[2] is PyDict)
+                                    if (headerTuple.Items.Count == 3 && headerTuple.Items[2] is PyDict)
                                     {
                                         PyDict dict = headerTuple.Items[2] as PyDict;
                                         return new WrongMachoNode(dict);
                                     }
                                 }
-                                    //
-                                    //blue.DBRowDescriptor
+                                if (token.Token == "blue.DBRowDescriptor")
+                                {
+                                    return new DBRowDescriptor(headerTuple);
                                 }
                             }
+                        }
                     }
                     // type 2
                     //eve.common.script.dogma.effect.BrainEffect

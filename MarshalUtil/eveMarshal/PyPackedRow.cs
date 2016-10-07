@@ -4,16 +4,17 @@ using System.IO;
 using eveMarshal.Database;
 using System.Linq;
 using System.Text;
+using eveMarshal.Extended;
 
 namespace eveMarshal
 {
 
     public class PyPackedRow : PyObject
     {
-        public PyObjectEx Header { get; private set; }
+        public DBRowDescriptor Descriptor { get; private set; }
         public byte[] RawData { get; private set; }
 
-        public List<Column> Columns { get; private set; }
+        public PyObject[] values { get; private set; }
 
         public PyPackedRow()
             : base(PyObjectType.PackedRow)
@@ -23,17 +24,23 @@ namespace eveMarshal
 
         public PyObject Get(string key)
         {
-            var col = Columns.Where(c => c.Name == key).FirstOrDefault();
-            return col == null ? null : col.Value;
+            //var col = Descriptor.Columns.Where(c => c.Name == key).FirstOrDefault();
+            //return col == null ? null : col.Value;
+            if (Descriptor == null)
+            {
+                return null;
+            }
+            int index = Descriptor.Columns.FindIndex(x => x.Name == key);
+            return values[index];
         }
 
         public override void Decode(Unmarshal context, MarshalOpcode op, BinaryReader source)
         {
             PyObject obj = context.ReadObject(source);
-            Header = obj as PyObjectEx;
-            if(Header == null)
+            Descriptor = obj as DBRowDescriptor;
+            if(Descriptor == null)
             {
-                throw new InvalidDataException("PyPackedRow: Header must be PyObjectEx got " + obj.Type);
+                throw new InvalidDataException("PyPackedRow: Header must be DBRowDescriptor got " + obj.Type);
             }
             RawData = LoadZeroCompressed(source);
 
@@ -43,38 +50,13 @@ namespace eveMarshal
 
         private bool ParseRowData(Unmarshal context, BinaryReader source)
         {
-            var objex = Header as PyObjectEx;
-            if (objex == null)
-                return false;
-
-            var header = objex.Header as PyTuple;
-            if (header == null || header.Items.Count < 2)
-                return false;
-
-            var columns = header.Items[1] as PyTuple;
-            if (columns == null)
-                return false;
-
-            columns = columns.Items[0] as PyTuple;
-            if (columns == null)
-                return false;
-
-            Columns = new List<Column>(columns.Items.Count);
-
-            foreach (var obj in columns.Items)
+            if (Descriptor == null)
             {
-                var fieldData = obj as PyTuple;
-                if (fieldData == null || fieldData.Items.Count < 2)
-                    continue;
-
-                var name = fieldData.Items[0] as PyString;
-                if (name == null)
-                    continue;
-
-                Columns.Add(new Column(name.Value, (FieldType) fieldData.Items[1].IntValue));
+                return false;
             }
 
-            var sizeList = Columns.OrderByDescending(c => FieldTypeHelper.GetTypeBits(c.Type));
+            values = new PyObject[Descriptor.Columns.Count];
+            var sizeList = Descriptor.Columns.OrderByDescending(c => FieldTypeHelper.GetTypeBits(c.Type));
             var sizeSum = sizeList.Sum(c => FieldTypeHelper.GetTypeBits(c.Type));
             // align
             sizeSum = (sizeSum + 7) >> 3;
@@ -82,49 +64,52 @@ namespace eveMarshal
             // fill up
             rawStream.Write(RawData, 0, RawData.Length);
             for (int i = 0; i < (sizeSum - RawData.Length); i++)
+            {
                 rawStream.WriteByte(0);
+            }
             rawStream.Seek(0, SeekOrigin.Begin);
             var reader = new BinaryReader(rawStream);
 
             int bitOffset = 0;
             foreach (var column in sizeList)
             {
+                PyObject value = null;
                 switch (column.Type)
                 {
                     case FieldType.I8:
                     case FieldType.UI8:
                     case FieldType.CY:
                     case FieldType.FileTime:
-                        column.Value = new PyLongLong(reader.ReadInt64());
+                        value = new PyLongLong(reader.ReadInt64());
                         break;
 
                     case FieldType.I4:
                     case FieldType.UI4:
-                        column.Value = new PyInt(reader.ReadInt32());
+                        value = new PyInt(reader.ReadInt32());
                         break;
 
                     case FieldType.I2:
                     case FieldType.UI2:
-                        column.Value = new PyInt(reader.ReadInt16());
+                        value = new PyInt(reader.ReadInt16());
                         break;
 
                     case FieldType.I1:
                     case FieldType.UI1:
-                        column.Value = new PyInt(reader.ReadByte());
+                        value = new PyInt(reader.ReadByte());
                         break;
 
                     case FieldType.R8:
-                        column.Value = new PyFloat(reader.ReadDouble());
+                        value = new PyFloat(reader.ReadDouble());
                         break;
 
                     case FieldType.R4:
-                        column.Value = new PyFloat(reader.ReadSingle());
+                        value = new PyFloat(reader.ReadSingle());
                         break;
 
                     case FieldType.Bytes:
                     case FieldType.Str:
                     case FieldType.WStr:
-                        column.Value = context.ReadObject(source);
+                        value = context.ReadObject(source);
                         break;
 
                     case FieldType.Bool:
@@ -137,13 +122,19 @@ namespace eveMarshal
 
                             var b = reader.ReadByte();
                             reader.BaseStream.Seek(-1, SeekOrigin.Current);
-                            column.Value = new PyInt((b >> bitOffset++) & 0x01);
+                            value = new PyInt((b >> bitOffset++) & 0x01);
                             break;
                         }
+
+                    case FieldType.Token:
+                        value = new PyToken(column.Token);
+                        break;
 
                     default:
                         throw new Exception("No support for " + column.Type);
                 }
+                int index = Descriptor.Columns.FindIndex(x => x.Name == column.Name);
+                values[index] = value;
             }
 
             return true;
@@ -195,11 +186,13 @@ namespace eveMarshal
             StringBuilder builder = new StringBuilder();
             string pfx1 = prefix + PrettyPrinter.Spacer;
             builder.AppendLine("[PyPackedRow " + RawData.Length + " bytes]");
-            if (Columns != null)
+            if (Descriptor.Columns != null)
             {
-                foreach (var column in Columns)
+                foreach (var column in Descriptor.Columns)
                 {
-                    builder.AppendLine(pfx1 + "[\"" + column.Name + "\" => " + " [" + column.Type + "] " + column.Value + "]");
+                    int index = Descriptor.Columns.FindIndex(x => x.Name == column.Name);
+                    PyObject value = values[index];
+                    builder.AppendLine(pfx1 + "[\"" + column.Name + "\" => " + " [" + column.Type + "] " + value + "]");
                 }
             }
             else
