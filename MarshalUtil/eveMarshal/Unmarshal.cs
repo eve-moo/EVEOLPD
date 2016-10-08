@@ -24,6 +24,9 @@ namespace eveMarshal
 
         private int _currentSaveIndex;
 
+        public bool analizeInput = true;
+        public static StringBuilder unknown = new StringBuilder();
+
         public PyObject Process(byte[] data)
         {
             if (data == null)
@@ -198,7 +201,11 @@ namespace eveMarshal
                 Console.ReadLine();
             }
 
-            return analyse(ret);
+            if (analizeInput)
+            {
+                return analyse(ret);
+            }
+            return ret;
         }
 
         public static T Process<T>(byte[] data) where T : class
@@ -216,6 +223,7 @@ namespace eveMarshal
                     PyObjectEx ex = obj as PyObjectEx;
                     if (!ex.IsType2)
                     {
+                        // Type1
                         PyTuple headerTuple = ex.Header as PyTuple;
                         if (headerTuple != null && headerTuple.Items.Count > 1)
                         {
@@ -242,13 +250,89 @@ namespace eveMarshal
                                 {
                                     return new DBRowDescriptor(headerTuple);
                                 }
+                                if (token.Token == "collections.defaultdict")
+                                {
+                                    return new DefaultDict();
+                                }
+                                if (token.Token == "carbon.common.script.net.objectCaching.CacheOK")
+                                {
+                                    return new CacheOK();
+                                }
+                                if (token.Token == "eveexceptions.UserError")
+                                {
+                                    if (headerTuple.Items.Count == 3 && headerTuple.Items[2] is PyDict)
+                                    {
+                                        PyDict dict = headerTuple.Items[2] as PyDict;
+                                        return new UserError(dict);
+                                    }
+                                }
+                                if (token.Token == "carbon.common.script.net.GPSExceptions.GPSTransportClosed")
+                                {
+                                    return obj;
+                                }
+                                unknown.AppendLine("Unknown Token: " + token.Token);
                             }
                         }
                     }
-                    // type 2
-                    //eve.common.script.dogma.effect.BrainEffect
-                    //carbon.common.script.sys.crowset.CRowset
-                    //carbon.common.script.sys.crowset.CIndexedRowset
+                    else
+                    {
+                        // type 2
+                        PyTuple headerTuple = ex.Header as PyTuple;
+                        if (headerTuple != null && headerTuple.Items.Count > 1)
+                        {
+                            PyDict dict = headerTuple.Items[1] as PyDict;
+                            PyToken token = null;
+                            PyTuple tokenTuple = headerTuple.Items[0] as PyTuple;
+                            if (tokenTuple != null && tokenTuple.Items.Count == 1)
+                            {
+                                token = tokenTuple.Items[0] as PyToken;
+                            }
+                            if (token != null)
+                            {
+                                if (token.Token == "carbon.common.script.sys.crowset.CRowset")
+                                {
+                                    return new CRowSet(dict, ex.List);
+                                }
+                                if (token.Token == "carbon.common.script.sys.crowset.CIndexedRowset")
+                                {
+                                    return new CIndexedRowset(dict, ex.Dictionary);
+                                }
+                                if (token.Token == "eve.common.script.dogma.effect.BrainEffect")
+                                {
+                                    return obj;
+                                }
+                                if (token.Token == "industry.job.Location")
+                                {
+                                    return obj;
+                                }
+                                if (token.Token == "eve.common.script.sys.rowset.RowDict")
+                                {
+                                    return obj;
+                                }
+                                if (token.Token == "carbon.common.script.sys.crowset.CFilterRowset")
+                                {
+                                    return obj;
+                                }
+                                if (token.Token == "eve.common.script.sys.rowset.RowList")
+                                {
+                                    return obj;
+                                }
+                                if (token.Token == "eve.common.script.util.pagedCollection.PagedResultSet")
+                                {
+                                    return obj;
+                                }
+                                if (token.Token == "shipskins.storage.LicensedSkin")
+                                {
+                                    return obj;
+                                }
+                                if (token.Token == "seasons.common.challenge.Challenge")
+                                {
+                                    return obj;
+                                }
+                                unknown.AppendLine("Unknown Token type 2: " + token.Token);
+                            }
+                        }
+                    }
                 }
             }
             catch (InvalidDataException)

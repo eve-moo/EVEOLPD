@@ -196,6 +196,7 @@ namespace MarshalUtil
             {
                 totalWriter = new System.IO.StreamWriter(totalFile);
             }
+            Unmarshal.unknown = new StringBuilder();
             // Make sure packets are in order.
             Array.Sort<string>(PACKET_FILES);
             foreach (string file in PACKET_FILES)
@@ -212,6 +213,11 @@ namespace MarshalUtil
                 }
                 i++;
                 progressBar1.Value = i;
+            }
+            if(Unmarshal.unknown.Length > 0)
+            {
+                txtOutput.AppendText(workingDir + System.Environment.NewLine);
+                txtOutput.AppendText(Unmarshal.unknown.ToString() + System.Environment.NewLine);
             }
             if (totalWriter != null)
             {
