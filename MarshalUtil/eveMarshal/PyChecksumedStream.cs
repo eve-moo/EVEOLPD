@@ -4,12 +4,12 @@ using System.Text;
 namespace eveMarshal
 {
 
-    public class PyChecksumedStream : PyObject
+    public class PyChecksumedStream : PyRep
     {
         public uint Checksum { get; private set; }
-        public PyObject Data { get; private set; }
+        public PyRep Data { get; private set; }
 
-        public PyChecksumedStream(PyObject data)
+        public PyChecksumedStream(PyRep data)
             : base(PyObjectType.ChecksumedStream)
         {
             Data = data;

@@ -3,7 +3,7 @@
 namespace eveMarshal
 {
 
-    public class PyLongLong : PyObject
+    public class PyLongLong : PyRep
     {
         public long Value { get; private set; }
 

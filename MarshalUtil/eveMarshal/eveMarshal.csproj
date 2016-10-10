@@ -73,8 +73,8 @@
     <Compile Include="PyList.cs" />
     <Compile Include="PyLongLong.cs" />
     <Compile Include="PyNone.cs" />
+    <Compile Include="PyRep.cs" />
     <Compile Include="PyObject.cs" />
-    <Compile Include="PyObjectData.cs" />
     <Compile Include="PyObjectEx.cs" />
     <Compile Include="PyObjectType.cs" />
     <Compile Include="PyPackedRow.cs" />

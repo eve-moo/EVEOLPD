@@ -20,14 +20,14 @@ namespace eveMarshal
         public bool DebugMode { get; set; }
 
         public Dictionary<int, int> SavedElementsMap { get; private set; }
-        public PyObject[] SavedElements { get; private set; }
+        public PyRep[] SavedElements { get; private set; }
 
         private int _currentSaveIndex;
 
         public bool analizeInput = true;
         public static StringBuilder unknown = new StringBuilder();
 
-        public PyObject Process(byte[] data)
+        public PyRep Process(byte[] data)
         {
             if (data == null)
                 return null;
@@ -36,7 +36,7 @@ namespace eveMarshal
             return Process(new BinaryReader(new MemoryStream(data), Encoding.ASCII));
         }
 
-        private PyObject Process(BinaryReader reader)
+        private PyRep Process(BinaryReader reader)
         {
             var magic = reader.ReadByte();
             if (magic != HeaderByte)
@@ -57,19 +57,19 @@ namespace eveMarshal
                         throw new InvalidDataException("Bogus map data in marshal stream");
                     SavedElementsMap.Add(i, index);
                 }
-                SavedElements = new PyObject[saveCount];
+                SavedElements = new PyRep[saveCount];
                 reader.BaseStream.Seek(currentPos, SeekOrigin.Begin);
             }
 
             return ReadObject(reader);
         }
 
-        private PyObject CreateAndDecode<T>(BinaryReader reader, MarshalOpcode op) where T : PyObject, new()
+        private PyRep CreateAndDecode<T>(BinaryReader reader, MarshalOpcode op) where T : PyRep, new()
         {
             // -1 for the opcode
             var ret = new T { RawOffset = reader.BaseStream.Position - 1 };
             ret.Decode(this, op, reader);
-            if (PyObject.EnableInspection)
+            if (PyRep.EnableInspection)
             {
                 var postOffset = reader.BaseStream.Position;
                 reader.BaseStream.Seek(ret.RawOffset, SeekOrigin.Begin);
@@ -79,7 +79,7 @@ namespace eveMarshal
             return ret;
         }
 
-        public PyObject ReadObject(BinaryReader reader)
+        public PyRep ReadObject(BinaryReader reader)
         {
             var header = reader.ReadByte();
             //bool flagUnknown = (header & UnknownMask) > 0;
@@ -92,7 +92,7 @@ namespace eveMarshal
                 // If there are nested saves the indexes will be wrong if we wait.
                 saveIndex = SavedElementsMap[_currentSaveIndex++];
             }
-            PyObject ret;
+            PyRep ret;
             //Console.WriteLine("OPCODE: "+opcode);
             switch (opcode)
             {
@@ -158,7 +158,7 @@ namespace eveMarshal
                     ret = CreateAndDecode<PyDict>(reader, opcode);
                     break;
                 case MarshalOpcode.Object:
-                    ret = CreateAndDecode<PyObjectData>(reader, opcode);
+                    ret = CreateAndDecode<PyObject>(reader, opcode);
                     break;
                 case MarshalOpcode.ChecksumedStream:
                     ret = CreateAndDecode<PyChecksumedStream>(reader, opcode);
@@ -214,14 +214,14 @@ namespace eveMarshal
             return un.Process(data) as T;
         }
 
-        private PyObject analyse(PyObject obj)
+        private PyRep analyse(PyRep obj)
         {
             try
             {
                 if (obj is PyObjectEx)
                 {
                     bool usedList, usedDict;
-                    PyObject res = obj;
+                    PyRep res = obj;
                     PyObjectEx ex = obj as PyObjectEx;
                     if (!ex.IsType2)
                     {
@@ -258,7 +258,7 @@ namespace eveMarshal
             return obj;
         }
 
-        private PyObject analyseType1(PyObjectEx obj, out bool usedList, out bool usedDict)
+        private PyRep analyseType1(PyObjectEx obj, out bool usedList, out bool usedDict)
         {
             usedDict = false;
             usedList = false;
@@ -315,7 +315,7 @@ namespace eveMarshal
             return obj;
         }
 
-        private PyObject analyseType2(PyObjectEx obj, out bool usedList, out bool usedDict)
+        private PyRep analyseType2(PyObjectEx obj, out bool usedList, out bool usedDict)
         {
             usedDict = false;
             usedList = false;

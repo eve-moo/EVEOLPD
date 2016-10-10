@@ -7,7 +7,7 @@ namespace eveMarshal
 
     public static class Marshal
     {
-        public static byte[] Process(PyObject obj)
+        public static byte[] Process(PyRep obj)
         {
             var ret = new MemoryStream(100);
             ret.WriteByte(Unmarshal.HeaderByte);
@@ -20,9 +20,9 @@ namespace eveMarshal
             return ret.ToArray();
         }
 
-        public static PyTuple Tuple(params PyObject[] objs)
+        public static PyTuple Tuple(params PyRep[] objs)
         {
-            return new PyTuple(new List<PyObject>(objs));
+            return new PyTuple(new List<PyRep>(objs));
         }
 
         public static PyDict Dict(params object[] objs)
@@ -30,16 +30,16 @@ namespace eveMarshal
             if (objs.Length % 2 == 1)
                 throw new ArgumentException("Expected pair arguments");
 
-            var ret = new PyDict(new Dictionary<PyObject, PyObject>(objs.Length / 2));
+            var ret = new PyDict(new Dictionary<PyRep, PyRep>(objs.Length / 2));
             for (int i = 0; i < (objs.Length/2); i++)
             {
                 var key = objs[i];
                 var val = objs[i + 1];
                 if (!(key is string))
                     throw new ArgumentException("Expected string");
-                if (!(val is PyObject))
+                if (!(val is PyRep))
                     throw new ArgumentException("Expected PyObject");
-                ret.Dictionary.Add(new PyString(key as string), val as PyObject);
+                ret.Dictionary.Add(new PyString(key as string), val as PyRep);
             }
             return ret;
         }

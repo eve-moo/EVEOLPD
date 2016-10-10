@@ -4,9 +4,9 @@ using System.Text;
 namespace eveMarshal
 {
 
-    public class PySubStruct : PyObject
+    public class PySubStruct : PyRep
     {
-        public PyObject Definition { get; set; }
+        public PyRep Definition { get; set; }
 
         public PySubStruct()
             : base(PyObjectType.SubStruct)

@@ -39,7 +39,7 @@ namespace MarshalUtil
                 Unmarshal un = new Unmarshal();
                 //un.DebugMode = true;
                 //PyObject obj = un.Process(BinaryReader.);
-                PyObject obj = un.Process(raw);
+                PyRep obj = un.Process(raw);
                 txtOutput.Text = PrettyPrinter.Print(obj);
             }
             catch
@@ -55,7 +55,7 @@ namespace MarshalUtil
                 un.DebugMode = true;
                 // un.DebugMode = true;
                 //PyObject obj = un.Process(BinaryReader.);
-                PyObject obj = un.Process(raw);
+                PyRep obj = un.Process(raw);
                 txtOutput.Text = PrettyPrinter.Print(obj);
             }
             /*

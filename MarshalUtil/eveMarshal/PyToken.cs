@@ -4,7 +4,7 @@ using System.Text;
 namespace eveMarshal
 {
 
-    public class PyToken : PyObject
+    public class PyToken : PyRep
     {
         public byte[] RawToken { get; set; }
         public string Token { get; set; }

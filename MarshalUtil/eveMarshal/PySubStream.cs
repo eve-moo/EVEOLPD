@@ -4,10 +4,10 @@ using System.Text;
 namespace eveMarshal
 {
 
-    public class PySubStream : PyObject
+    public class PySubStream : PyRep
     {
         public byte[] RawData { get; set; }
-        public PyObject Data { get; set; }
+        public PyRep Data { get; set; }
         public Unmarshal DataUnmarshal { get; set; }
 
         public PySubStream()
@@ -24,7 +24,7 @@ namespace eveMarshal
             Data = DataUnmarshal.Process(data);
         }
 
-        public PySubStream(PyObject data)
+        public PySubStream(PyRep data)
             : base(PyObjectType.SubStream)
         {
             Data = data;

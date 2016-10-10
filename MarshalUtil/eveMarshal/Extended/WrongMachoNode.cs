@@ -13,7 +13,7 @@ namespace eveMarshal.Extended
         {
             if(obj.Contains("payload"))
             {
-                PyObject value = obj.Get("payload");
+                PyRep value = obj.Get("payload");
                 correctNode = value.IntValue;
             }
         }

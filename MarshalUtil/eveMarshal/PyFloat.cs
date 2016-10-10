@@ -3,7 +3,7 @@
 namespace eveMarshal
 {
 
-    public class PyFloat : PyObject
+    public class PyFloat : PyRep
     {
         public double Value { get; private set; }
 

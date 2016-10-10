@@ -117,7 +117,7 @@ namespace MarshalUtil
                 try
                 {
                     Unmarshal un = new Unmarshal();
-                    PyObject obj = un.Process(data);
+                    PyRep obj = un.Process(data);
                     decodeDone = true;
                     obj = analyse(obj, filename);
                     string decoded = PrettyPrinter.Print(obj);
@@ -229,11 +229,11 @@ namespace MarshalUtil
         /*
         Attempt to analyse
         */
-        public PyObject analyse(PyObject obj, string filename)
+        public PyRep analyse(PyRep obj, string filename)
         {
             if(obj.Type == PyObjectType.ObjectData)
             {
-                PyObjectData packetData = obj as PyObjectData;
+                PyObject packetData = obj as PyObject;
                 try
                 {
                     return new PyPacket(packetData);

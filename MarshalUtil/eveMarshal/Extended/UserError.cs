@@ -9,11 +9,11 @@ namespace eveMarshal.Extended
     public class UserError : ExtendedObject
     {
         public string message;
-        public PyObject dict;
+        public PyRep dict;
 
         public UserError(PyDict nDict)
         {
-            PyObject msg = nDict.Get("msg");
+            PyRep msg = nDict.Get("msg");
             if (msg == null)
             {
                 throw new InvalidDataException("UserError: No message found.");

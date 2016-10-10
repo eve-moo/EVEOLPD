@@ -6,17 +6,17 @@ using System.Text;
 namespace eveMarshal
 {
 
-    public class PyTuple : PyObject, IEnumerable<PyObject>
+    public class PyTuple : PyRep, IEnumerable<PyRep>
     {
-        public List<PyObject> Items { get; private set; }
+        public List<PyRep> Items { get; private set; }
 
         public PyTuple()
             : base(PyObjectType.Tuple)
         {
-            Items = new List<PyObject>();
+            Items = new List<PyRep>();
         }
 
-        public PyTuple(List<PyObject> items)
+        public PyTuple(List<PyRep> items)
             : base(PyObjectType.Tuple)
         {
             Items = items;
@@ -43,7 +43,7 @@ namespace eveMarshal
 
             if (count >= 0)
             {
-                Items = new List<PyObject>(count);
+                Items = new List<PyRep>(count);
                 for (int i = 0; i < count; i++)
                     Items.Add(context.ReadObject(source));
             }
@@ -70,7 +70,7 @@ namespace eveMarshal
             }
         }
 
-        public override PyObject this[int index]
+        public override PyRep this[int index]
         {
             get
             {
@@ -82,7 +82,7 @@ namespace eveMarshal
             }
         }
 
-        public IEnumerator<PyObject> GetEnumerator()
+        public IEnumerator<PyRep> GetEnumerator()
         {
             return Items.GetEnumerator();
         }

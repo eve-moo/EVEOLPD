@@ -5,17 +5,17 @@ using System.Text;
 
 namespace eveMarshal
 {
-    public class PyPacket : PyObject
+    public class PyPacket : PyRep
     {
         public string typeString;
         public long packetType;
         public long userID;
         public PyAddress source;
         public PyAddress dest;
-        public PyObject payload;
-        public PyObject namedPayload;
+        public PyRep payload;
+        public PyRep namedPayload;
 
-        public PyPacket(PyObjectData packetData)
+        public PyPacket(PyObject packetData)
             : base(PyObjectType.Packet)
         {
             if (!packetData.Name.StartsWith("carbon.common.script.net.machoNetPacket."))

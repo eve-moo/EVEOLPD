@@ -6,7 +6,7 @@ namespace eveMarshal.Extended
 {
     public class CallRsp : ExtendedObject
     {
-        PyObject response;
+        PyRep response;
 
         public CallRsp(PyTuple payload)
         {

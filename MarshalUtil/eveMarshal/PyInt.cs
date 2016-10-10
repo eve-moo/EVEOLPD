@@ -4,7 +4,7 @@ using System.Text;
 namespace eveMarshal
 {
 
-    public class PyInt : PyObject
+    public class PyInt : PyRep
     {
         public int Value { get; private set; }
 

@@ -6,7 +6,7 @@ namespace eveMarshal.Extended
 {
     class CallMachoBindObject : ExtendedObject
     {
-        PyObject bindArgs;
+        PyRep bindArgs;
         long characterID = 0;
         long locationID = 0;
         long locationGroupID = 0;

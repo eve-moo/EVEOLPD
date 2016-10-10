@@ -3,7 +3,7 @@
 namespace eveMarshal
 {
 
-    public class PyNone : PyObject
+    public class PyNone : PyRep
     {
         
         public PyNone()

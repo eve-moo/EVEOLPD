@@ -15,14 +15,14 @@ namespace eveMarshal
             return Encoding.UTF8.GetByteCount(value) == value.Length;
         }
 
-        public static string Print(PyObject obj, int indention = 0)
+        public static string Print(PyRep obj, int indention = 0)
         {
             var ret = new StringBuilder();
             Print(ret, "", obj);
             return ret.ToString();
         }
 
-        public static void Print(StringBuilder builder, string prefix, PyObject obj)
+        public static void Print(StringBuilder builder, string prefix, PyRep obj)
         {
             if(obj == null)
             {
@@ -34,7 +34,7 @@ namespace eveMarshal
             builder.AppendLine(prefix + obj.dump(prefix).TrimEnd('\r', '\n'));// + PrintRawData(obj));
         }
 
-        public static string PrintRawData(PyObject obj)
+        public static string PrintRawData(PyRep obj)
         {
             if (obj.RawSource == null)
                 return "";

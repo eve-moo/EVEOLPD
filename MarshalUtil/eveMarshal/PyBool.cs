@@ -3,7 +3,7 @@
 namespace eveMarshal
 {
     
-    public class PyBool : PyObject
+    public class PyBool : PyRep
     {
         public bool Value { get; set; }
 

@@ -10,21 +10,21 @@ namespace eveMarshal.Extended
     {
         string columnName;
         DBRowDescriptor descriptor;
-        Dictionary<PyObject, PyObject> rows;
+        Dictionary<PyRep, PyRep> rows;
 
-        public CIndexedRowset(PyDict dict, Dictionary<PyObject, PyObject> nRows)
+        public CIndexedRowset(PyDict dict, Dictionary<PyRep, PyRep> nRows)
         {
             rows = nRows;
             if(rows == null)
             {
-                rows = new Dictionary<PyObject, PyObject>();
+                rows = new Dictionary<PyRep, PyRep>();
             }
             descriptor = dict.Get("header") as DBRowDescriptor;
             if (descriptor == null)
             {
                 throw new InvalidDataException("CIndexedRowSet: Invalid DBRowDescriptor.");
             }
-            PyObject name = dict.Get("columnName");
+            PyRep name = dict.Get("columnName");
             if(name == null)
             {
                 throw new InvalidDataException("CIndexedRowSet: Could not find index name.");

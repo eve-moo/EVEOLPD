@@ -5,7 +5,7 @@ using System.Text;
 namespace eveMarshal
 {
 
-    public class PyBuffer : PyObject
+    public class PyBuffer : PyRep
     {
         public byte[] Data { get; private set; }
 

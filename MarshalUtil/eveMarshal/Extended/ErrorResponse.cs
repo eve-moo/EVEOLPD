@@ -10,7 +10,7 @@ namespace eveMarshal.Extended
     {
         public long causingMessageType = 0;
         public long errorCode = 0;
-        public PyObject errorPayload = null;
+        public PyRep errorPayload = null;
 
         public ErrorResponse(PyTuple payload)
         {

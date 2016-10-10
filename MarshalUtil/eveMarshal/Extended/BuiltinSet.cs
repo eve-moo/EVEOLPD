@@ -9,7 +9,7 @@ namespace eveMarshal.Extended
     {
         public PyList values { get; private set; }
 
-        private static PyObject createHeader(PyList list)
+        private static PyRep createHeader(PyList list)
         {
             PyTuple tuple = new PyTuple();
             tuple.Items.Add(new PyToken("__builtin__.set"));

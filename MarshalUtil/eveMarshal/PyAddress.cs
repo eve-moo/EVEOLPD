@@ -4,7 +4,7 @@ using System.Text;
 
 namespace eveMarshal
 {
-    public class PyAddress : PyObject
+    public class PyAddress : PyRep
     {
         public PyAddressType addrType = PyAddressType.Any;
         public long addrID = 0;
@@ -12,14 +12,14 @@ namespace eveMarshal
         public string service = "";
         public string broadcastType = "";
 
-        public PyAddress(PyObject args)
+        public PyAddress(PyRep args)
             : base(PyObjectType.Address)
         {
             if(args.Type != PyObjectType.ObjectData)
             {
                 throw new InvalidDataException("PyAddress: Incorrect object type expected ObjectData got " + args.Type.ToString() + ".");
             }
-            PyObjectData data = args as PyObjectData;
+            PyObject data = args as PyObject;
             if(data.Name != "carbon.common.script.net.machoNetAddress.MachoAddress")
             {
                 throw new InvalidDataException("PyAddress: Unrecognized address name got " + data.Name + ".");

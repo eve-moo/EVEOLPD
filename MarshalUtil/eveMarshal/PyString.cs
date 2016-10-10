@@ -5,7 +5,7 @@ using System.Text;
 namespace eveMarshal
 {
 
-    public class PyString : PyObject
+    public class PyString : PyRep
     {
         public string Value { get; private set; }
         public byte[] Raw { get; private set; }
@@ -141,7 +141,7 @@ namespace eveMarshal
                 try
                 {
                     Unmarshal un = new Unmarshal();
-                    PyObject obj = un.Process(Raw);
+                    PyRep obj = un.Process(Raw);
                     PrettyPrinter.Print(builder, pfx1, obj);
                 }
                 catch (Exception)

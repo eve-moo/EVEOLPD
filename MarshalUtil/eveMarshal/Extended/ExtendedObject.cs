@@ -3,7 +3,7 @@ using System.IO;
 
 namespace eveMarshal.Extended
 {
-    public abstract class ExtendedObject : PyObject
+    public abstract class ExtendedObject : PyRep
     {
         public ExtendedObject() : base(PyObjectType.Extended)
         {

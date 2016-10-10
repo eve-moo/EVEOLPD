@@ -7,7 +7,7 @@ namespace eveMarshal
     /// <summary>
     /// Used to insert raw data into the marshal stream; not an actual blue marshal opcode
     /// </summary>
-    public class PyRawData : PyObject
+    public class PyRawData : PyRep
     {
         public byte[] Data { get; set; }
 

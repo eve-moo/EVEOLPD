@@ -6,17 +6,17 @@ using System.Text;
 namespace eveMarshal
 {
     
-    public class PyList : PyObject, IEnumerable<PyObject>
+    public class PyList : PyRep, IEnumerable<PyRep>
     {
-        public List<PyObject> Items { get; private set; }
+        public List<PyRep> Items { get; private set; }
 
         public PyList()
             : base(PyObjectType.List)
         {
-            Items = new List<PyObject>();
+            Items = new List<PyRep>();
         }
 
-        public PyList(List<PyObject> items)
+        public PyList(List<PyRep> items)
             : base(PyObjectType.List)
         {
             Items = items;
@@ -40,7 +40,7 @@ namespace eveMarshal
 
             if (count >= 0)
             {
-                Items = new List<PyObject>(count);
+                Items = new List<PyRep>(count);
                 for (int i = 0; i < count; i++)
                     Items.Add(context.ReadObject(source));
             }
@@ -65,7 +65,7 @@ namespace eveMarshal
             }
         }
 
-        public IEnumerator<PyObject> GetEnumerator()
+        public IEnumerator<PyRep> GetEnumerator()
         {
             return Items.GetEnumerator();
         }

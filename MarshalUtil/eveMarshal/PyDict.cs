@@ -6,30 +6,30 @@ using System.Linq;
 namespace eveMarshal
 {
 
-    public class PyDict : PyObject
+    public class PyDict : PyRep
     {
-        public Dictionary<PyObject, PyObject> Dictionary { get; private set; }
+        public Dictionary<PyRep, PyRep> Dictionary { get; private set; }
         
         public PyDict()
             : base(PyObjectType.Dict)
         {
-            Dictionary = new Dictionary<PyObject, PyObject>();
+            Dictionary = new Dictionary<PyRep, PyRep>();
         }
         
-        public PyDict(Dictionary<PyObject, PyObject> dict)
+        public PyDict(Dictionary<PyRep, PyRep> dict)
             : base(PyObjectType.Dict)
         {
             Dictionary = dict;
         }
 
-        public PyObject Get(string key)
+        public PyRep Get(string key)
         {
             var keyObject =
                 Dictionary.Keys.Where(k => k.Type == PyObjectType.String && (k as PyString).Value == key).FirstOrDefault();
             return keyObject == null ? null : Dictionary[keyObject];
         }
 
-        public void Set(string key, PyObject value)
+        public void Set(string key, PyRep value)
         {
             var keyObject = Dictionary.Count > 0 ? Dictionary.Keys.Where(k => k.Type == PyObjectType.String && (k as PyString).Value == key).FirstOrDefault() : null;
             if (keyObject != null)
@@ -46,7 +46,7 @@ namespace eveMarshal
         public override void Decode(Unmarshal context, MarshalOpcode op, BinaryReader source)
         {
             var entries = source.ReadSizeEx();
-            Dictionary = new Dictionary<PyObject, PyObject>((int)entries);
+            Dictionary = new Dictionary<PyRep, PyRep>((int)entries);
             for (uint i = 0; i < entries; i++)
             {
                 var value = context.ReadObject(source);
@@ -66,7 +66,7 @@ namespace eveMarshal
             }
         }
 
-        public PyObject this[PyObject key]
+        public PyRep this[PyRep key]
         {
             get
             {
@@ -78,7 +78,7 @@ namespace eveMarshal
             }
         }
 
-        public override PyObject this[string key]
+        public override PyRep this[string key]
         {
             get
             {

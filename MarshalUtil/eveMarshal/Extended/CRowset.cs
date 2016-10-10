@@ -8,14 +8,14 @@ namespace eveMarshal.Extended
     public class CRowSet : ExtendedObject
     {
         public DBRowDescriptor descriptor;
-        public List<PyObject> rows;
+        public List<PyRep> rows;
 
-        public CRowSet(PyDict dict, List<PyObject> list)
+        public CRowSet(PyDict dict, List<PyRep> list)
         {
             rows = list;
             if(rows == null)
             {
-                rows = new List<PyObject>();
+                rows = new List<PyRep>();
             }
             descriptor = dict.Get("header") as DBRowDescriptor;
             if (descriptor == null)

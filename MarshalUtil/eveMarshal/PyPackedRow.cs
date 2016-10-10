@@ -9,12 +9,12 @@ using eveMarshal.Extended;
 namespace eveMarshal
 {
 
-    public class PyPackedRow : PyObject
+    public class PyPackedRow : PyRep
     {
         public DBRowDescriptor Descriptor { get; private set; }
         public byte[] RawData { get; private set; }
 
-        public PyObject[] values { get; private set; }
+        public PyRep[] values { get; private set; }
 
         public PyPackedRow()
             : base(PyObjectType.PackedRow)
@@ -22,7 +22,7 @@ namespace eveMarshal
             
         }
 
-        public PyObject Get(string key)
+        public PyRep Get(string key)
         {
             //var col = Descriptor.Columns.Where(c => c.Name == key).FirstOrDefault();
             //return col == null ? null : col.Value;
@@ -36,7 +36,7 @@ namespace eveMarshal
 
         public override void Decode(Unmarshal context, MarshalOpcode op, BinaryReader source)
         {
-            PyObject obj = context.ReadObject(source);
+            PyRep obj = context.ReadObject(source);
             Descriptor = obj as DBRowDescriptor;
             if(Descriptor == null)
             {
@@ -55,7 +55,7 @@ namespace eveMarshal
                 return false;
             }
 
-            values = new PyObject[Descriptor.Columns.Count];
+            values = new PyRep[Descriptor.Columns.Count];
             var sizeList = Descriptor.Columns.OrderByDescending(c => FieldTypeHelper.GetTypeBits(c.Type));
             var sizeSum = sizeList.Sum(c => FieldTypeHelper.GetTypeBits(c.Type));
             // align
@@ -73,7 +73,7 @@ namespace eveMarshal
             int bitOffset = 0;
             foreach (var column in sizeList)
             {
-                PyObject value = null;
+                PyRep value = null;
                 switch (column.Type)
                 {
                     case FieldType.I8:
@@ -191,7 +191,7 @@ namespace eveMarshal
                 foreach (var column in Descriptor.Columns)
                 {
                     int index = Descriptor.Columns.FindIndex(x => x.Name == column.Name);
-                    PyObject value = values[index];
+                    PyRep value = values[index];
                     builder.AppendLine(pfx1 + "[\"" + column.Name + "\" => " + " [" + column.Type + "] " + value + "]");
                 }
             }
