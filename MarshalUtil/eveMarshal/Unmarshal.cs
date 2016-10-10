@@ -183,7 +183,7 @@ namespace eveMarshal
 
             if (flagSave)
             {
-                if(saveIndex == 0)
+                if (saveIndex == 0)
                 {
                     // This only seams to occure in GPSTransport packets when the server shuts down.
                     saveIndex = 1;
@@ -220,119 +220,35 @@ namespace eveMarshal
             {
                 if (obj is PyObjectEx)
                 {
+                    bool usedList, usedDict;
+                    PyObject res = obj;
                     PyObjectEx ex = obj as PyObjectEx;
                     if (!ex.IsType2)
                     {
-                        // Type1
-                        PyTuple headerTuple = ex.Header as PyTuple;
-                        if (headerTuple != null && headerTuple.Items.Count > 1)
-                        {
-                            PyToken token = headerTuple.Items[0] as PyToken;
-                            if (token != null)
-                            {
-                                if (token.Token == "__builtin__.set")
-                                {
-                                    PyTuple tuple = headerTuple.Items[1] as PyTuple;
-                                    if (tuple != null && tuple.Items.Count > 0)
-                                    {
-                                        return new BuiltinSet(tuple.Items[0] as PyList);
-                                    }
-                                }
-                                if (token.Token == "carbon.common.script.net.machoNetExceptions.WrongMachoNode")
-                                {
-                                    if (headerTuple.Items.Count == 3 && headerTuple.Items[2] is PyDict)
-                                    {
-                                        PyDict dict = headerTuple.Items[2] as PyDict;
-                                        return new WrongMachoNode(dict);
-                                    }
-                                }
-                                if (token.Token == "blue.DBRowDescriptor")
-                                {
-                                    return new DBRowDescriptor(headerTuple);
-                                }
-                                if (token.Token == "collections.defaultdict")
-                                {
-                                    return new DefaultDict();
-                                }
-                                if (token.Token == "carbon.common.script.net.objectCaching.CacheOK")
-                                {
-                                    return new CacheOK();
-                                }
-                                if (token.Token == "eveexceptions.UserError")
-                                {
-                                    if (headerTuple.Items.Count == 3 && headerTuple.Items[2] is PyDict)
-                                    {
-                                        PyDict dict = headerTuple.Items[2] as PyDict;
-                                        return new UserError(dict);
-                                    }
-                                }
-                                if (token.Token == "carbon.common.script.net.GPSExceptions.GPSTransportClosed")
-                                {
-                                    return obj;
-                                }
-                                unknown.AppendLine("Unknown Token: " + token.Token);
-                            }
-                        }
+                        res = analyseType1(ex, out usedList, out usedDict);
                     }
                     else
                     {
-                        // type 2
-                        PyTuple headerTuple = ex.Header as PyTuple;
-                        if (headerTuple != null && headerTuple.Items.Count > 1)
+                        res = analyseType2(ex, out usedList, out usedDict);
+                    }
+                    if (res != obj)
+                    {
+                        if (!usedList)
                         {
-                            PyDict dict = headerTuple.Items[1] as PyDict;
-                            PyToken token = null;
-                            PyTuple tokenTuple = headerTuple.Items[0] as PyTuple;
-                            if (tokenTuple != null && tokenTuple.Items.Count == 1)
+                            if (ex.List != null && ex.List.Count > 0)
                             {
-                                token = tokenTuple.Items[0] as PyToken;
+                                unknown.AppendLine("Unused List item in " + res.GetType());
                             }
-                            if (token != null)
+                        }
+                        if (!usedDict)
+                        {
+                            if (ex.Dictionary != null && ex.Dictionary.Count > 0)
                             {
-                                if (token.Token == "carbon.common.script.sys.crowset.CRowset")
-                                {
-                                    return new CRowSet(dict, ex.List);
-                                }
-                                if (token.Token == "carbon.common.script.sys.crowset.CIndexedRowset")
-                                {
-                                    return new CIndexedRowset(dict, ex.Dictionary);
-                                }
-                                if (token.Token == "eve.common.script.dogma.effect.BrainEffect")
-                                {
-                                    return obj;
-                                }
-                                if (token.Token == "industry.job.Location")
-                                {
-                                    return obj;
-                                }
-                                if (token.Token == "eve.common.script.sys.rowset.RowDict")
-                                {
-                                    return obj;
-                                }
-                                if (token.Token == "carbon.common.script.sys.crowset.CFilterRowset")
-                                {
-                                    return obj;
-                                }
-                                if (token.Token == "eve.common.script.sys.rowset.RowList")
-                                {
-                                    return obj;
-                                }
-                                if (token.Token == "eve.common.script.util.pagedCollection.PagedResultSet")
-                                {
-                                    return obj;
-                                }
-                                if (token.Token == "shipskins.storage.LicensedSkin")
-                                {
-                                    return obj;
-                                }
-                                if (token.Token == "seasons.common.challenge.Challenge")
-                                {
-                                    return obj;
-                                }
-                                unknown.AppendLine("Unknown Token type 2: " + token.Token);
+                                unknown.AppendLine("Unused dictionary item in " + res.GetType());
                             }
                         }
                     }
+                    return res;
                 }
             }
             catch (InvalidDataException)
@@ -341,6 +257,128 @@ namespace eveMarshal
             }
             return obj;
         }
+
+        private PyObject analyseType1(PyObjectEx obj, out bool usedList, out bool usedDict)
+        {
+            usedDict = false;
+            usedList = false;
+            // Type1
+            PyTuple headerTuple = obj.Header as PyTuple;
+            if (headerTuple != null && headerTuple.Items.Count > 1)
+            {
+                PyToken token = headerTuple.Items[0] as PyToken;
+                if (token != null)
+                {
+                    if (token.Token == "__builtin__.set")
+                    {
+                        PyTuple tuple = headerTuple.Items[1] as PyTuple;
+                        if (tuple != null && tuple.Items.Count > 0)
+                        {
+                            return new BuiltinSet(tuple.Items[0] as PyList);
+                        }
+                    }
+                    if (token.Token == "carbon.common.script.net.machoNetExceptions.WrongMachoNode")
+                    {
+                        if (headerTuple.Items.Count == 3 && headerTuple.Items[2] is PyDict)
+                        {
+                            PyDict dict = headerTuple.Items[2] as PyDict;
+                            return new WrongMachoNode(dict);
+                        }
+                    }
+                    if (token.Token == "blue.DBRowDescriptor")
+                    {
+                        return new DBRowDescriptor(headerTuple);
+                    }
+                    if (token.Token == "collections.defaultdict")
+                    {
+                        return new DefaultDict();
+                    }
+                    if (token.Token == "carbon.common.script.net.objectCaching.CacheOK")
+                    {
+                        return new CacheOK();
+                    }
+                    if (token.Token == "eveexceptions.UserError")
+                    {
+                        if (headerTuple.Items.Count == 3 && headerTuple.Items[2] is PyDict)
+                        {
+                            PyDict dict = headerTuple.Items[2] as PyDict;
+                            return new UserError(dict);
+                        }
+                    }
+                    if (token.Token == "carbon.common.script.net.GPSExceptions.GPSTransportClosed")
+                    {
+                        return obj;
+                    }
+                    unknown.AppendLine("Unknown Token: " + token.Token);
+                }
+            }
+            return obj;
+        }
+
+        private PyObject analyseType2(PyObjectEx obj, out bool usedList, out bool usedDict)
+        {
+            usedDict = false;
+            usedList = false;
+            // type 2
+            PyTuple headerTuple = obj.Header as PyTuple;
+            if (headerTuple != null && headerTuple.Items.Count > 1)
+            {
+                PyDict dict = headerTuple.Items[1] as PyDict;
+                PyToken token = null;
+                PyTuple tokenTuple = headerTuple.Items[0] as PyTuple;
+                if (tokenTuple != null && tokenTuple.Items.Count == 1)
+                {
+                    token = tokenTuple.Items[0] as PyToken;
+                }
+                if (token != null)
+                {
+                    if (token.Token == "carbon.common.script.sys.crowset.CRowset")
+                    {
+                        usedList = true;
+                        return new CRowSet(dict, obj.List);
+                    }
+                    if (token.Token == "carbon.common.script.sys.crowset.CIndexedRowset")
+                    {
+                        usedDict = true;
+                        return new CIndexedRowset(dict, obj.Dictionary);
+                    }
+                    if (token.Token == "eve.common.script.dogma.effect.BrainEffect")
+                    {
+                        return obj;
+                    }
+                    if (token.Token == "industry.job.Location")
+                    {
+                        return obj;
+                    }
+                    if (token.Token == "eve.common.script.sys.rowset.RowDict")
+                    {
+                        return obj;
+                    }
+                    if (token.Token == "carbon.common.script.sys.crowset.CFilterRowset")
+                    {
+                        return obj;
+                    }
+                    if (token.Token == "eve.common.script.sys.rowset.RowList")
+                    {
+                        return obj;
+                    }
+                    if (token.Token == "eve.common.script.util.pagedCollection.PagedResultSet")
+                    {
+                        return obj;
+                    }
+                    if (token.Token == "shipskins.storage.LicensedSkin")
+                    {
+                        return obj;
+                    }
+                    if (token.Token == "seasons.common.challenge.Challenge")
+                    {
+                        return obj;
+                    }
+                    unknown.AppendLine("Unknown Token type 2: " + token.Token);
+                }
+            }
+            return obj;
+        }
     }
 
-}
+    }
