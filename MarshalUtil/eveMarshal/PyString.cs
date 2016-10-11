@@ -126,7 +126,7 @@ namespace eveMarshal
         {
             if (Value.Length <= 0)
                 return "<empty string>";
-            if (char.IsLetterOrDigit(Value[0]))
+            if (char.IsLetterOrDigit(Value[0]) || Value[0] >= 32)
                 return "<" + Value + ">";
             return "<" + BitConverter.ToString(Raw) + ">";
         }
