@@ -266,50 +266,67 @@ namespace eveMarshal
             PyTuple headerTuple = obj.Header as PyTuple;
             if (headerTuple != null && headerTuple.Items.Count > 1)
             {
+                int headerCount = headerTuple.Items.Count;
                 PyToken token = headerTuple.Items[0] as PyToken;
                 if (token != null)
                 {
-                    if (token.Token == "__builtin__.set")
+                    PyTuple tuple1 = null;
+                    int tuple1Count = 0;
+                    if (headerCount > 1)
                     {
-                        PyTuple tuple = headerTuple.Items[1] as PyTuple;
-                        if (tuple != null && tuple.Items.Count > 0)
+                        tuple1 = headerTuple.Items[1] as PyTuple;
+                        if (tuple1 != null)
                         {
-                            return new BuiltinSet(tuple.Items[0] as PyList);
-                        }
-                    }
-                    if (token.Token == "carbon.common.script.net.machoNetExceptions.WrongMachoNode")
-                    {
-                        if (headerTuple.Items.Count == 3 && headerTuple.Items[2] is PyDict)
-                        {
-                            PyDict dict = headerTuple.Items[2] as PyDict;
-                            return new WrongMachoNode(dict);
-                        }
-                    }
-                    if (token.Token == "blue.DBRowDescriptor")
-                    {
-                        return new DBRowDescriptor(headerTuple);
-                    }
-                    if (token.Token == "collections.defaultdict")
-                    {
-                        return new DefaultDict();
-                    }
-                    if (token.Token == "carbon.common.script.net.objectCaching.CacheOK")
-                    {
-                        return new CacheOK();
-                    }
-                    if (token.Token == "eveexceptions.UserError")
-                    {
-                        if (headerTuple.Items.Count == 3 && headerTuple.Items[2] is PyDict)
-                        {
-                            PyDict dict = headerTuple.Items[2] as PyDict;
-                            return new UserError(dict);
+                            if (headerCount == 3 && token.Token == "eveexceptions.UserError")
+                            {
+                                return new UserError(tuple1, headerTuple.Items[2] as PyDict);
+                            }
+                            tuple1Count = tuple1.Items.Count;
+                            if (tuple1Count == 0)
+                            {
+                                if (headerCount == 3 && token.Token == "carbon.common.script.net.machoNetExceptions.WrongMachoNode")
+                                {
+                                        return new WrongMachoNode(headerTuple.Items[2] as PyDict);
+                                }
+                            }
+                            if (tuple1Count == 1)
+                            {
+                                if (token.Token == "blue.DBRowDescriptor")
+                                {
+                                    return new DBRowDescriptor(headerTuple);
+                                }
+                                PyRep item1 = tuple1.Items[0];
+                                if (item1 != null)
+                                {
+                                    if (token.Token == "__builtin__.set")
+                                    {
+                                        return new BuiltinSet(item1 as PyList);
+                                    }
+                                    if (headerCount == 2 && token.Token == "collections.defaultdict")
+                                    {
+                                            PyToken tupleToken = item1 as PyToken;
+                                            if (tupleToken.Token == "__builtin__.set")
+                                            {
+                                                usedDict = true;
+                                                return new DefaultDict(obj.Dictionary);
+                                            }
+                                    }
+                                    if (token.Token == "carbon.common.script.net.objectCaching.CacheOK")
+                                    {
+                                        if (item1.StringValue == "CacheOK")
+                                        {
+                                            return new CacheOK();
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                     if (token.Token == "carbon.common.script.net.GPSExceptions.GPSTransportClosed")
                     {
                         return obj;
                     }
-                    unknown.AppendLine("Unknown Token: " + token.Token);
+                    unknown.AppendLine("Unknown or malformed token: " + token.Token);
                 }
             }
             return obj;
@@ -323,6 +340,7 @@ namespace eveMarshal
             PyTuple headerTuple = obj.Header as PyTuple;
             if (headerTuple != null && headerTuple.Items.Count > 1)
             {
+                int headerCount = headerTuple.Items.Count;
                 PyDict dict = headerTuple.Items[1] as PyDict;
                 PyToken token = null;
                 PyTuple tokenTuple = headerTuple.Items[0] as PyTuple;
@@ -332,12 +350,16 @@ namespace eveMarshal
                 }
                 if (token != null)
                 {
-                    if (token.Token == "carbon.common.script.sys.crowset.CRowset")
+                    if(headerCount != 2)
+                    {
+                        Unmarshal.unknown.AppendLine("PyObjectEx Type2: headerCount=" + headerCount + " token: " + token.Token);
+                    }
+                    if (headerCount == 2 && token.Token == "carbon.common.script.sys.crowset.CRowset")
                     {
                         usedList = true;
                         return new CRowSet(dict, obj.List);
                     }
-                    if (token.Token == "carbon.common.script.sys.crowset.CIndexedRowset")
+                    if (headerCount == 2 && token.Token == "carbon.common.script.sys.crowset.CIndexedRowset")
                     {
                         usedDict = true;
                         return new CIndexedRowset(dict, obj.Dictionary);

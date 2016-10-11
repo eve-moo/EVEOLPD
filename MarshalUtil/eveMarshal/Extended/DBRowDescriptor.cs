@@ -32,6 +32,10 @@ namespace eveMarshal.Extended
             {
                 throw new InvalidDataException("DBRowDescriptor: null tuple.");
             }
+            if (tuple.Items.Count > 1)
+            {
+                throw new InvalidDataException("DBRowDescriptor: Wrong tuple size expected 1 got" + tuple.Items.Count);
+            }
             PyTuple columns = tuple.Items[0] as PyTuple;
             if (columns == null)
             {
