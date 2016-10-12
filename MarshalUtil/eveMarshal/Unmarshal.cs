@@ -25,7 +25,7 @@ namespace eveMarshal
         private int _currentSaveIndex;
 
         public bool analizeInput = true;
-        public static StringBuilder unknown = new StringBuilder();
+        public StringBuilder unknown = new StringBuilder();
 
         public PyRep Process(byte[] data)
         {
@@ -352,7 +352,7 @@ namespace eveMarshal
                 {
                     if(headerCount != 2)
                     {
-                        Unmarshal.unknown.AppendLine("PyObjectEx Type2: headerCount=" + headerCount + " token: " + token.Token);
+                        unknown.AppendLine("PyObjectEx Type2: headerCount=" + headerCount + " token: " + token.Token);
                     }
                     if (headerCount == 2 && token.Token == "carbon.common.script.sys.crowset.CRowset")
                     {

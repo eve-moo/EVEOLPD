@@ -31,11 +31,10 @@
             this.button1 = new System.Windows.Forms.Button();
             this.evePathTxtBox = new System.Windows.Forms.TextBox();
             this.btnProcess = new System.Windows.Forms.Button();
-            this.txtOutput = new System.Windows.Forms.TextBox();
-            this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.singleFile = new System.Windows.Forms.CheckBox();
             this.packetSubDirs = new System.Windows.Forms.CheckBox();
             this.progressBar2 = new System.Windows.Forms.ProgressBar();
+            this.progressIndicators = new System.Windows.Forms.FlowLayoutPanel();
             this.SuspendLayout();
             // 
             // button1
@@ -56,7 +55,7 @@
             this.evePathTxtBox.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.evePathTxtBox.Location = new System.Drawing.Point(93, 15);
             this.evePathTxtBox.Name = "evePathTxtBox";
-            this.evePathTxtBox.Size = new System.Drawing.Size(403, 20);
+            this.evePathTxtBox.Size = new System.Drawing.Size(387, 20);
             this.evePathTxtBox.TabIndex = 1;
             // 
             // btnProcess
@@ -66,36 +65,11 @@
             this.btnProcess.Enabled = false;
             this.btnProcess.Location = new System.Drawing.Point(237, 41);
             this.btnProcess.Name = "btnProcess";
-            this.btnProcess.Size = new System.Drawing.Size(259, 23);
+            this.btnProcess.Size = new System.Drawing.Size(243, 23);
             this.btnProcess.TabIndex = 2;
             this.btnProcess.Text = "Process";
             this.btnProcess.UseVisualStyleBackColor = true;
             this.btnProcess.Click += new System.EventHandler(this.btnProcess_Click);
-            // 
-            // txtOutput
-            // 
-            this.txtOutput.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtOutput.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtOutput.HideSelection = false;
-            this.txtOutput.Location = new System.Drawing.Point(12, 70);
-            this.txtOutput.Multiline = true;
-            this.txtOutput.Name = "txtOutput";
-            this.txtOutput.ReadOnly = true;
-            this.txtOutput.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtOutput.Size = new System.Drawing.Size(484, 179);
-            this.txtOutput.TabIndex = 3;
-            this.txtOutput.WordWrap = false;
-            // 
-            // progressBar1
-            // 
-            this.progressBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.progressBar1.Location = new System.Drawing.Point(12, 255);
-            this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(484, 23);
-            this.progressBar1.TabIndex = 4;
             // 
             // singleFile
             // 
@@ -123,26 +97,37 @@
             // 
             this.progressBar2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.progressBar2.Location = new System.Drawing.Point(12, 284);
+            this.progressBar2.Location = new System.Drawing.Point(12, 319);
             this.progressBar2.Name = "progressBar2";
-            this.progressBar2.Size = new System.Drawing.Size(484, 23);
+            this.progressBar2.Size = new System.Drawing.Size(468, 23);
             this.progressBar2.TabIndex = 7;
+            // 
+            // progressIndicators
+            // 
+            this.progressIndicators.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.progressIndicators.AutoScroll = true;
+            this.progressIndicators.Location = new System.Drawing.Point(12, 69);
+            this.progressIndicators.Name = "progressIndicators";
+            this.progressIndicators.Size = new System.Drawing.Size(468, 244);
+            this.progressIndicators.TabIndex = 8;
             // 
             // Form2
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(508, 319);
+            this.ClientSize = new System.Drawing.Size(492, 354);
+            this.Controls.Add(this.progressIndicators);
             this.Controls.Add(this.progressBar2);
             this.Controls.Add(this.packetSubDirs);
             this.Controls.Add(this.singleFile);
-            this.Controls.Add(this.progressBar1);
-            this.Controls.Add(this.txtOutput);
             this.Controls.Add(this.btnProcess);
             this.Controls.Add(this.evePathTxtBox);
             this.Controls.Add(this.button1);
             this.Name = "Form2";
             this.Text = "Bulk Packet Decode";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form2_FormClosing);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -153,10 +138,9 @@
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.TextBox evePathTxtBox;
         private System.Windows.Forms.Button btnProcess;
-        private System.Windows.Forms.TextBox txtOutput;
-        private System.Windows.Forms.ProgressBar progressBar1;
     private System.Windows.Forms.CheckBox singleFile;
         private System.Windows.Forms.CheckBox packetSubDirs;
         private System.Windows.Forms.ProgressBar progressBar2;
+        private System.Windows.Forms.FlowLayoutPanel progressIndicators;
     }
 }
