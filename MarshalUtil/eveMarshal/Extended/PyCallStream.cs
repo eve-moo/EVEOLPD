@@ -6,6 +6,7 @@ namespace eveMarshal.Extended
 {
     class PyCallStream : ExtendedObject
     {
+        long zeroOne = 0;
         Int64 remoteObject = 0;
         string remoteObjectStr = "";
         string method = "";
@@ -13,34 +14,23 @@ namespace eveMarshal.Extended
         PyDict arg_dict = null;
         ExtendedObject extended = null;
 
+        /*
+        * [PyTuple 1]
+        *   [PyTuple 2]
+        *     [PyInt zeroOne]
+        *     [PySubStream]
+        *       [PyInt/PyString remoteObject/remoteObjectStr]
+        *       [PyString method]
+        *       [PyTuple arg_tuple]
+        *       [PyDict arg_dict]
+        */
         public PyCallStream(PyTuple payload)
         {
-            if(payload == null)
-            {
-                throw new InvalidDataException("PyCallStream: null payload.");
-            }
-            if (payload.Items.Count != 1)
-            {
-                throw new InvalidDataException("PyCallStream: Invalid tuple size expected 1 got" + payload.Items.Count);
-            }
-            PyTuple tuple = payload.Items[0] as PyTuple;
-            if(tuple == null)
-            {
-                throw new InvalidDataException("PyCallStream: Invalid tuple.");
-            }
-            if (tuple.Items.Count != 2)
-            {
-                throw new InvalidDataException("PyCallStream: Invalid tuple size expected 2 got" + payload.Items.Count);
-            }
-            PySubStream sub = tuple.Items[1] as PySubStream;
-            PyTuple call = null;
-            if(sub != null)
-            {
-                call = sub.Data as PyTuple;
-            }
+            long zeroOne;
+            PyTuple call = getZeroSubStream(payload as PyTuple, out zeroOne) as PyTuple;
             if(call == null)
             {
-                throw new InvalidDataException("PyCallStream: Could not find call tuple.");
+                throw new InvalidDataException("PyCallStream: null payload.");
             }
             if(call.Items.Count != 4)
             {
@@ -86,7 +76,7 @@ namespace eveMarshal.Extended
             string pfx2 = pfx1 + PrettyPrinter.Spacer;
             string pfx3 = pfx2 + PrettyPrinter.Spacer;
             StringBuilder builder = new StringBuilder();
-            builder.AppendLine("[PyCallStream]:");
+            builder.AppendLine("[PyCallStream" + zeroOne +"]");
             if(remoteObject == 0)
             {
                 builder.AppendLine(pfx1 + "remoteObject: '" + remoteObjectStr + "'");

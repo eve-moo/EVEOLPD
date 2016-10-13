@@ -12,7 +12,7 @@ namespace eveMarshal
         public PyBuffer()
             : base(PyObjectType.Buffer)
         {
-            
+            Data = null;
         }
 
         public PyBuffer(byte[] data)
@@ -49,6 +49,16 @@ namespace eveMarshal
         {
             StringBuilder builder = new StringBuilder();
             builder.AppendLine(prefix + "[PyBuffer " + Data.Length + " bytes]" + PrettyPrinter.PrintRawData(this));
+            if(Data[0] == Unmarshal.HeaderByte || Data[0] == Unmarshal.ZlibMarker)
+            {
+                string pfx1 = prefix + PrettyPrinter.Spacer;
+                Unmarshal un = new Unmarshal();
+                PyRep rep = un.Process(Data);
+                if(rep != null)
+                {
+                    builder.AppendLine(pfx1 + rep.dump(pfx1));
+                }
+            }
             return builder.ToString();
         }
 

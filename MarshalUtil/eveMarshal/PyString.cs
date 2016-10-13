@@ -133,24 +133,21 @@ namespace eveMarshal
 
         public override string dump(string prefix)
         {
-            if (Raw.Length > 0 && Raw[0] == (byte)120)
+            if (Raw.Length > 0 && (Raw[0] == (byte)Unmarshal.ZlibMarker || Raw[0] == (byte)Unmarshal.HeaderByte))
             {
                 // We have serialized python data, decode and display it.
                 string pfx1 = prefix + PrettyPrinter.Spacer;
-                StringBuilder builder = new StringBuilder();
                 try
                 {
                     Unmarshal un = new Unmarshal();
                     PyRep obj = un.Process(Raw);
-                    PrettyPrinter.Print(builder, pfx1, obj);
+                    if(obj != null)
+                    {
+                        return "[PyString <serialized>" + Environment.NewLine + obj.dump(pfx1) + prefix + "]";
+                    }
                 }
                 catch (Exception)
                 {
-                    builder.Clear();
-                }
-                if (builder.Length > 0)
-                {
-                    return "[PyString <serialized>" + Environment.NewLine + builder.ToString() + prefix + "]";
                 }
             }
             if (!PrettyPrinter.containsBinary(Raw))

@@ -9,6 +9,16 @@ namespace eveMarshal.Extended
     {
         public Dictionary<PyRep, PyRep> Dictionary { get; private set; }
 
+        /*
+        * [PyObjectEx Type1]
+        *   header:
+        *     [PyToken "collections.defaultdict"]
+        *     [PyTuple 1]
+        *       [PyToken __builtin__.set]
+        *   dict:
+        *     Dictionary
+        * create with: new DefaultDict();
+        */
         public DefaultDict(Dictionary<PyRep, PyRep> dict)
         {
             Dictionary = dict;

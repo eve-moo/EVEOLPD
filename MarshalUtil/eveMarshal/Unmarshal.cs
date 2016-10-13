@@ -357,11 +357,19 @@ namespace eveMarshal
                     if (headerCount == 2 && token.Token == "carbon.common.script.sys.crowset.CRowset")
                     {
                         usedList = true;
+                        if (dict.Dictionary.Count > 1)
+                        {
+                            unknown.AppendLine("PyObjectEx Type2: Extra parameters in dict for CRowset");
+                        }
                         return new CRowSet(dict, obj.List);
                     }
                     if (headerCount == 2 && token.Token == "carbon.common.script.sys.crowset.CIndexedRowset")
                     {
                         usedDict = true;
+                        if(dict.Dictionary.Count > 2)
+                        {
+                            unknown.AppendLine("PyObjectEx Type2: Extra parameters in dict for CIndexedRowset");
+                        }
                         return new CIndexedRowset(dict, obj.Dictionary);
                     }
                     if (token.Token == "eve.common.script.dogma.effect.BrainEffect")

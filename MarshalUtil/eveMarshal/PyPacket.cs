@@ -70,17 +70,21 @@ namespace eveMarshal
                 {
                     payload = new SessionChangeNotification(payload as PyTuple);
                 }
-                if (typeString.EndsWith(".CallRsp"))
+                else if (typeString.EndsWith(".CallRsp"))
                 {
                     payload = new CallRsp(payload as PyTuple);
                 }
-                if (typeString.EndsWith(".CallReq"))
+                else if (typeString.EndsWith(".CallReq"))
                 {
                     payload = new PyCallStream(payload as PyTuple);
                 }
-                if (typeString.EndsWith(".ErrorResponse"))
+                else if (typeString.EndsWith(".ErrorResponse"))
                 {
                     payload = new ErrorResponse(payload as PyTuple);
+                }
+                else if (typeString.EndsWith(".Notification"))
+                {
+                    payload = new NotificationStream(payload as PyTuple);
                 }
             }
             catch (InvalidDataException e)
@@ -112,13 +116,13 @@ namespace eveMarshal
             string pfx2 = pfx1 + PrettyPrinter.Spacer;
             StringBuilder builder = new StringBuilder();
             builder.AppendLine("[PyPacket typeID=" + packetType + "  userID=" + userID + "  name='" + typeString + "']");
-            builder.AppendLine(pfx1 + "[Source]");
+            builder.AppendLine(pfx1 + "Source:");
             PrettyPrinter.Print(builder, pfx2, source);
-            builder.AppendLine(pfx1 + "[Destination]");
+            builder.AppendLine(pfx1 + "Destination:");
             PrettyPrinter.Print(builder, pfx2, dest);
-            builder.AppendLine(pfx1 + "[Payload]");
+            builder.AppendLine(pfx1 + "Payload:");
             PrettyPrinter.Print(builder, pfx2, payload);
-            builder.AppendLine(pfx1 + "[Named Payload]");
+            builder.AppendLine(pfx1 + "Named Payload:");
             PrettyPrinter.Print(builder, pfx2, namedPayload);
             return builder.ToString();
         }

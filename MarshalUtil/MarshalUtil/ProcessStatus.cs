@@ -1,11 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using eveMarshal;
 using System.IO;
@@ -227,18 +220,17 @@ namespace MarshalUtil
             {
                 // Yes, decompress it.
                 data = Zlib.Decompress(data);
-            }
-            // Is this a python file?
-            if (data != null && data[0] == PythonMarker)
-            {
-                // Yes, ignore it but dont cause an error.
-                return true;
+                if (data == null)
+                {
+                    // Decompress failed.
+                    return false;
+                }
             }
             // Is this a proper python serial stream?
-            if (data == null || data[0] != HeaderByte)
+            if (data[0] != HeaderByte)
             {
-                // No, fail!
-                return false;
+                // No, is this a python file? If yes, ignore it but dont cause an error.
+                return data[0] == PythonMarker;
             }
             bool decodeDone = false;
             try
@@ -268,9 +260,9 @@ namespace MarshalUtil
             }
             catch (Exception e)
             {
-                string err = "Error: " + e.ToString();
-                addText(err + Environment.NewLine);
+                string err = Path.GetFileName(filename) + Environment.NewLine + "Error: " + e.ToString();
                 // We, had an error but should still produce some kind of notice in the output.
+                addText(err + Environment.NewLine);
                 if (singleWriter != null)
                 {
                     // Write the filename.

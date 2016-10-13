@@ -6,8 +6,19 @@ namespace eveMarshal.Extended
 {
     public class CallRsp : ExtendedObject
     {
+        bool subStream = false;
         PyRep response;
 
+        /*
+        * [PyTuple 1]
+        *   [PyTuple] response
+        * or
+        * [PyTuple 1]
+        *   [PySubStream]
+        *     response
+        * -------------
+        * response = return from PyCallable::Call();
+        */
         public CallRsp(PyTuple payload)
         {
             if(payload == null)
@@ -28,6 +39,7 @@ namespace eveMarshal.Extended
                 {
                     throw new InvalidDataException("CallRsp: No PySubStreeam.");
                 }
+                subStream = true;
                 PySubStream sub = payload.Items[0] as PySubStream;
                 response = sub.Data;
             }
@@ -37,7 +49,7 @@ namespace eveMarshal.Extended
         {
             string pfx1 = prefix + PrettyPrinter.Spacer;
             StringBuilder builder = new StringBuilder();
-            builder.AppendLine("Response:");
+            builder.AppendLine("[CallRsp " + (subStream ? "PySubStream" : "PyTuple") + "]");
             PrettyPrinter.Print(builder, pfx1, response);
             return builder.ToString();
         }

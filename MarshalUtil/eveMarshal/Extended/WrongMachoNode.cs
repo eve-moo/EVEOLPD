@@ -9,7 +9,18 @@ namespace eveMarshal.Extended
     class WrongMachoNode : ExtendedObject
     {
         public Int64 correctNode;
-
+        /*
+        * [PyObjectEx Normal]
+        *   Header:
+        *     [PyTuple 3 items]
+        *       [PyToken carbon.common.script.net.machoNetExceptions.WrongMachoNode]
+        *       [PyTuple 0 items]
+        *       [PyDict 1 kvp]
+        *         Key:[PyString "payload"]
+        *         ==Value:[PyInt correctNode]
+        *   List:
+        *   Dictionary:
+        */
         public WrongMachoNode(PyDict obj)
         {
             if(obj == null)

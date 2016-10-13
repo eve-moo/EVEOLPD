@@ -51,6 +51,7 @@
     <Compile Include="Extended\DefaultDict.cs" />
     <Compile Include="Extended\ErrorResponse.cs" />
     <Compile Include="Extended\ExtendedObject.cs" />
+    <Compile Include="Extended\NotificationStream.cs" />
     <Compile Include="Extended\PyCallStream.cs" />
     <Compile Include="Extended\CallRsp.cs" />
     <Compile Include="Extended\SessionChangeNotification.cs" />

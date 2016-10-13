@@ -10,6 +10,18 @@ namespace eveMarshal.Extended
         public DBRowDescriptor descriptor;
         public List<PyRep> rows;
 
+        /*
+        * [PyObjectEx Type2]
+        *   header:
+        *     [PyTuple 1]
+        *       [PyToken "carbon.common.script.sys.crowset.CRowset"]
+        *     [PyDict]
+        *       Key=header
+        *       Value=[DBRowDescriptor]
+        *   list:
+        *     rows
+        * create with: DBResultToCRowset
+        */
         public CRowSet(PyDict dict, List<PyRep> list)
         {
             rows = list;

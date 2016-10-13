@@ -12,6 +12,20 @@ namespace eveMarshal.Extended
         PyList keywords = null;
         public List<Column> Columns { get; private set; }
 
+        /*
+        * [PyObjectEx Type1]
+        *   header:
+        *     [PyToken "blue.DBRowDescriptor"]
+        *     [PyTuple 1]
+        *       [PyTuple columns.Count]
+        *         columns as
+        *           [PyTuple 2]
+        *             [PyString "columnName"]
+        *             [PyInt columnDBType]
+        *     [PyList] (optional)
+        *       keywords
+        * create with: new DBRowDescriptor();
+        */
         public DBRowDescriptor(PyTuple header)
                 : base()
         {

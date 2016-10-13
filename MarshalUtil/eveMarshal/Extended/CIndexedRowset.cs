@@ -12,6 +12,20 @@ namespace eveMarshal.Extended
         DBRowDescriptor descriptor;
         Dictionary<PyRep, PyRep> rows;
 
+        /*
+        * [PyObjectEx Type2]
+        *   header:
+        *     [PyTuple 1]
+        *       [PyToken "carbon.common.script.sys.crowset.CIndexedRowset"]
+        *     [PyDict]
+        *       Key=header
+        *       Value=[DBRowDescriptor]
+        *       key=columnName
+        *       value=[PyString columnName]
+        *   dict:
+        *     rows
+        * create with: DBResultToCIndexedRowset()
+        */
         public CIndexedRowset(PyDict dict, Dictionary<PyRep, PyRep> nRows)
         {
             rows = nRows;

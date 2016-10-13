@@ -12,6 +12,16 @@ namespace eveMarshal.Extended
         public long errorCode = 0;
         public PyRep errorPayload = null;
 
+        /*
+        * [PyTuple 3 items]
+        *   [PyInt causingMessageType]
+        *   [PyInt ErrorCode]
+        *   [PyTuple 1 items]
+        *     [PySubStream 87 bytes]
+        *       errorPayload
+        * create with:
+        *    throw PyException(errorPayload)
+        */
         public ErrorResponse(PyTuple payload)
         {
             if (payload == null)
