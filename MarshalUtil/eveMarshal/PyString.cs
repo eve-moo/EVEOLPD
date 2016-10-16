@@ -143,7 +143,12 @@ namespace eveMarshal
                     PyRep obj = un.Process(Raw);
                     if(obj != null)
                     {
-                        return "[PyString <serialized>" + Environment.NewLine + obj.dump(pfx1) + prefix + "]";
+                        string sType = "<serialized>";
+                        if(Raw[0] == Unmarshal.ZlibMarker)
+                        {
+                            sType = "<serialized-compressed>";
+                        }
+                        return "[PyString " + sType + Environment.NewLine + pfx1 + obj.dump(pfx1) + Environment.NewLine + prefix + "]";
                     }
                 }
                 catch (Exception)

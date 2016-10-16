@@ -56,6 +56,10 @@ namespace eveMarshal
                 PyRep rep = un.Process(Data);
                 if(rep != null)
                 {
+                    if(Data[0] == Unmarshal.ZlibMarker)
+                    {
+                        builder.AppendLine("<compressed-data>");
+                    }
                     builder.AppendLine(pfx1 + rep.dump(pfx1));
                 }
             }

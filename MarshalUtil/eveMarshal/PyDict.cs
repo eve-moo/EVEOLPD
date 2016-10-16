@@ -116,7 +116,6 @@ namespace eveMarshal
                 {
                     builder.AppendLine(pfx1 + "==Value:" + kvp.Value.dump(pfx2).TrimEnd('\r', '\n'));
                 }
-                //PrettyPrinter.Print(builder, pfx1 + "==Value:", kvp.Value);
             }
             return builder.ToString();
         }
