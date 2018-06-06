@@ -43,14 +43,14 @@ namespace eveMarshal
             return Dictionary.Keys.Any(k => k.Type == PyObjectType.String && (k as PyString).Value == key);
         }
 
-        public override void Decode(Unmarshal context, MarshalOpcode op, BinaryReader source)
+        public override void Decode(Unmarshal context, MarshalOpcode op)
         {
-            var entries = source.ReadSizeEx();
+            var entries = context.reader.ReadSizeEx();
             Dictionary = new Dictionary<PyRep, PyRep>((int)entries);
             for (uint i = 0; i < entries; i++)
             {
-                var value = context.ReadObject(source);
-                var key = context.ReadObject(source);
+                var value = context.ReadObject();
+                var key = context.ReadObject();
                 Dictionary.Add(key, value);
             }
         }

@@ -55,7 +55,7 @@ namespace eveMarshal
             return BitConverter.GetBytes(value);
         }
 
-        public int Value
+        public Int64 Value
         {
             get
             {
@@ -65,14 +65,16 @@ namespace eveMarshal
                     return BitConverter.ToInt16(Raw, 0);
                 if (Raw.Length == 4)
                     return BitConverter.ToInt32(Raw, 0);
+                if (Raw.Length == 8)
+                    return BitConverter.ToInt64(Raw, 0);
                 return -1;
             }
         }
 
-        public override void Decode(Unmarshal context, MarshalOpcode op, BinaryReader source)
+        public override void Decode(Unmarshal context, MarshalOpcode op)
         {
-            var len = source.ReadSizeEx();
-            Raw = source.ReadBytes((int) len);
+            var len = context.reader.ReadSizeEx();
+            Raw = context.reader.ReadBytes((int) len);
         }
 
         protected override void EncodeInternal(BinaryWriter output)

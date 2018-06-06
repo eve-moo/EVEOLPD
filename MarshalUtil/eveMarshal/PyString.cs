@@ -12,6 +12,7 @@ namespace eveMarshal
         public bool ForceUTF8 { get; private set; }
         public MarshalOpcode opCode = MarshalOpcode.Error;
         public int tableIndex = -1;
+        private bool decodedAnalized = false;
 
         public PyString()
             : base(PyObjectType.String)
@@ -58,28 +59,29 @@ namespace eveMarshal
             Value = Encoding.UTF8.GetString(Raw);
         }
 
-        public override void Decode(Unmarshal context, MarshalOpcode op, BinaryReader source)
+        public override void Decode(Unmarshal context, MarshalOpcode op)
         {
+            decodedAnalized = context.analizeInput;
             opCode = op;
             if (op == MarshalOpcode.StringEmpty)
                 Update(new byte[0]);
             else if (op == MarshalOpcode.StringChar)
-                Update(new[]{source.ReadByte()});
+                Update(new[]{context.reader.ReadByte()});
             else if (op == MarshalOpcode.WStringUTF8)
-                UpdateUTF8(source.ReadBytes((int)source.ReadSizeEx()));
+                UpdateUTF8(context.reader.ReadBytes((int)context.reader.ReadSizeEx()));
             else if (op == MarshalOpcode.WStringUCS2Char)
-                Update(new[]{source.ReadByte(), source.ReadByte()}, true);
+                Update(new[]{context.reader.ReadByte(), context.reader.ReadByte()}, true);
             else if (op == MarshalOpcode.WStringEmpty)
                 Update(new byte[0]);
             else if (op == MarshalOpcode.WStringUCS2)
-                Update(source.ReadBytes((int)source.ReadSizeEx() * 2), true);
+                Update(context.reader.ReadBytes((int)context.reader.ReadSizeEx() * 2), true);
             else if (op == MarshalOpcode.StringShort)
-                Update(source.ReadBytes(source.ReadByte()));
+                Update(context.reader.ReadBytes(context.reader.ReadByte()));
             else if (op == MarshalOpcode.StringLong)
-                Update(source.ReadBytes((int)source.ReadSizeEx()));
+                Update(context.reader.ReadBytes((int)context.reader.ReadSizeEx()));
             else if (op == MarshalOpcode.StringTable)
             {
-                tableIndex = source.ReadByte();
+                tableIndex = context.reader.ReadByte();
                 Update(StringTable.Entries[tableIndex-1]);
             }
         }
@@ -180,6 +182,7 @@ namespace eveMarshal
                 try
                 {
                     Unmarshal un = new Unmarshal();
+                    un.analizeInput = decodedAnalized;
                     PyRep obj = un.Process(Raw);
                     if(obj != null)
                     {

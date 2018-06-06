@@ -21,10 +21,10 @@ namespace eveMarshal
             Token = token;
         }
 
-        public override void Decode(Unmarshal context, MarshalOpcode op, BinaryReader source)
+        public override void Decode(Unmarshal context, MarshalOpcode op)
         {
-            byte len = source.ReadByte();
-            RawToken = source.ReadBytes(len);
+            byte len = context.reader.ReadByte();
+            RawToken = context.reader.ReadBytes(len);
             Token = Encoding.ASCII.GetString(RawToken);
         }
 

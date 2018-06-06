@@ -22,7 +22,7 @@ namespace eveMarshal
             Items = items;
         }
 
-        public override void Decode(Unmarshal context, MarshalOpcode op, BinaryReader source)
+        public override void Decode(Unmarshal context, MarshalOpcode op)
         {
             int count = -1;
             switch (op)
@@ -34,7 +34,7 @@ namespace eveMarshal
                     count = 1;
                     break;
                 case MarshalOpcode.List:
-                    count = (int)source.ReadSizeEx();
+                    count = (int)context.reader.ReadSizeEx();
                     break;
             }
 
@@ -42,7 +42,7 @@ namespace eveMarshal
             {
                 Items = new List<PyRep>(count);
                 for (int i = 0; i < count; i++)
-                    Items.Add(context.ReadObject(source));
+                    Items.Add(context.ReadObject());
             }
         }
 

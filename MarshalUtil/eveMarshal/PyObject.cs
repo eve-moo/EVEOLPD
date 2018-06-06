@@ -23,14 +23,14 @@ namespace eveMarshal
         public string Name { get; set; }
         public PyRep Arguments { get; set; }
 
-        public override void Decode(Unmarshal context, MarshalOpcode op, BinaryReader source)
+        public override void Decode(Unmarshal context, MarshalOpcode op)
         {
-            var nameObject = context.ReadObject(source);
+            var nameObject = context.ReadObject();
             if (nameObject.Type != PyObjectType.String)
                 throw new DataException("Expected PyString");
             Name = (nameObject as PyString).Value;
 
-            Arguments = context.ReadObject(source);
+            Arguments = context.ReadObject();
         }
 
         protected override void EncodeInternal(BinaryWriter output)

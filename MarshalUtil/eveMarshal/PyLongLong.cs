@@ -19,9 +19,9 @@ namespace eveMarshal
             Value = val;
         }
 
-        public override void Decode(Unmarshal context, MarshalOpcode op, BinaryReader source)
+        public override void Decode(Unmarshal context, MarshalOpcode op)
         {
-            Value = source.ReadInt64();
+            Value = context.reader.ReadInt64();
         }
 
         protected override void EncodeInternal(BinaryWriter output)

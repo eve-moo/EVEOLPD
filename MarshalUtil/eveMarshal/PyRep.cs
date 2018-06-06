@@ -25,7 +25,7 @@ namespace eveMarshal
             Type = type;
         }
 
-        public abstract void Decode(Unmarshal context, MarshalOpcode op, BinaryReader source);
+        public abstract void Decode(Unmarshal context, MarshalOpcode op);
 
         public void Encode(BinaryWriter output)
         {

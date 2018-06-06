@@ -21,10 +21,10 @@ namespace eveMarshal
             
         }
 
-        public override void Decode(Unmarshal context, MarshalOpcode op, BinaryReader source)
+        public override void Decode(Unmarshal context, MarshalOpcode op)
         {
-            Checksum = source.ReadUInt32();
-            Data = context.ReadObject(source);
+            Checksum = context.reader.ReadUInt32();
+            Data = context.ReadObject();
         }
 
         protected override void EncodeInternal(BinaryWriter output)

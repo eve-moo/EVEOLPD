@@ -18,13 +18,14 @@ namespace eveMarshal
         public const byte OpcodeMask = 0x3F;
 
         public bool DebugMode { get; set; }
+        public BinaryReader reader;
 
         public Dictionary<int, int> SavedElementsMap { get; private set; }
         public PyRep[] SavedElements { get; private set; }
 
         private int _currentSaveIndex;
 
-        public bool analizeInput = true;
+        public bool analizeInput = false;
         public StringBuilder unknown = new StringBuilder();
 
         public PyRep Process(byte[] data)
@@ -33,10 +34,11 @@ namespace eveMarshal
                 return null;
             if (data[0] == ZlibMarker)
                 data = Zlib.Decompress(data);
-            return Process(new BinaryReader(new MemoryStream(data), Encoding.ASCII));
+            reader = new BinaryReader(new MemoryStream(data), Encoding.ASCII);
+            return Process();
         }
 
-        private PyRep Process(BinaryReader reader)
+        private PyRep Process()
         {
             var magic = reader.ReadByte();
             if (magic != HeaderByte)
@@ -61,14 +63,14 @@ namespace eveMarshal
                 reader.BaseStream.Seek(currentPos, SeekOrigin.Begin);
             }
 
-            return ReadObject(reader);
+            return ReadObject();
         }
 
-        private PyRep CreateAndDecode<T>(BinaryReader reader, MarshalOpcode op) where T : PyRep, new()
+        private PyRep CreateAndDecode<T>(MarshalOpcode op) where T : PyRep, new()
         {
             // -1 for the opcode
             var ret = new T { RawOffset = reader.BaseStream.Position - 1 };
-            ret.Decode(this, op, reader);
+            ret.Decode(this, op);
             if (PyRep.EnableInspection)
             {
                 var postOffset = reader.BaseStream.Position;
@@ -79,7 +81,7 @@ namespace eveMarshal
             return ret;
         }
 
-        public PyRep ReadObject(BinaryReader reader)
+        public PyRep ReadObject()
         {
             var header = reader.ReadByte();
             //bool flagUnknown = (header & UnknownMask) > 0;
@@ -97,26 +99,26 @@ namespace eveMarshal
             switch (opcode)
             {
                 case MarshalOpcode.SubStruct:
-                    ret = CreateAndDecode<PySubStruct>(reader, opcode);
+                    ret = CreateAndDecode<PySubStruct>(opcode);
                     break;
 
                 case MarshalOpcode.BoolFalse:
                 case MarshalOpcode.BoolTrue:
-                    ret = CreateAndDecode<PyBool>(reader, opcode);
+                    ret = CreateAndDecode<PyBool>(opcode);
                     break;
 
                 case MarshalOpcode.None:
-                    ret = CreateAndDecode<PyNone>(reader, opcode);
+                    ret = CreateAndDecode<PyNone>(opcode);
                     break;
                 case MarshalOpcode.Token:
-                    ret = CreateAndDecode<PyToken>(reader, opcode);
+                    ret = CreateAndDecode<PyToken>(opcode);
                     break;
                 case MarshalOpcode.Real:
                 case MarshalOpcode.RealZero:
-                    ret = CreateAndDecode<PyFloat>(reader, opcode);
+                    ret = CreateAndDecode<PyFloat>(opcode);
                     break;
                 case MarshalOpcode.IntegerLongLong:
-                    ret = CreateAndDecode<PyLongLong>(reader, opcode);
+                    ret = CreateAndDecode<PyLongLong>(opcode);
                     break;
                 case MarshalOpcode.IntegerSignedShort:
                 case MarshalOpcode.IntegerByte:
@@ -124,13 +126,13 @@ namespace eveMarshal
                 case MarshalOpcode.IntegerOne:
                 case MarshalOpcode.IntegerZero:
                 case MarshalOpcode.IntegerLong:
-                    ret = CreateAndDecode<PyInt>(reader, opcode);
+                    ret = CreateAndDecode<PyInt>(opcode);
                     break;
                 case MarshalOpcode.IntegerVar:
-                    ret = CreateAndDecode<PyIntegerVar>(reader, opcode);
+                    ret = CreateAndDecode<PyIntegerVar>(opcode);
                     break;
                 case MarshalOpcode.Buffer:
-                    ret = CreateAndDecode<PyBuffer>(reader, opcode);
+                    ret = CreateAndDecode<PyBuffer>(opcode);
                     break;
                 case MarshalOpcode.StringEmpty:
                 case MarshalOpcode.StringChar:
@@ -141,30 +143,30 @@ namespace eveMarshal
                 case MarshalOpcode.WStringUCS2:
                 case MarshalOpcode.WStringUCS2Char:
                 case MarshalOpcode.WStringUTF8:
-                    ret = CreateAndDecode<PyString>(reader, opcode);
+                    ret = CreateAndDecode<PyString>(opcode);
                     break;
                 case MarshalOpcode.Tuple:
                 case MarshalOpcode.TupleOne:
                 case MarshalOpcode.TupleTwo:
                 case MarshalOpcode.TupleEmpty:
-                    ret = CreateAndDecode<PyTuple>(reader, opcode);
+                    ret = CreateAndDecode<PyTuple>(opcode);
                     break;
                 case MarshalOpcode.List:
                 case MarshalOpcode.ListOne:
                 case MarshalOpcode.ListEmpty:
-                    ret = CreateAndDecode<PyList>(reader, opcode);
+                    ret = CreateAndDecode<PyList>(opcode);
                     break;
                 case MarshalOpcode.Dict:
-                    ret = CreateAndDecode<PyDict>(reader, opcode);
+                    ret = CreateAndDecode<PyDict>(opcode);
                     break;
                 case MarshalOpcode.Object:
-                    ret = CreateAndDecode<PyObject>(reader, opcode);
+                    ret = CreateAndDecode<PyObject>(opcode);
                     break;
                 case MarshalOpcode.ChecksumedStream:
-                    ret = CreateAndDecode<PyChecksumedStream>(reader, opcode);
+                    ret = CreateAndDecode<PyChecksumedStream>(opcode);
                     break;
                 case MarshalOpcode.SubStream:
-                    ret = CreateAndDecode<PySubStream>(reader, opcode);
+                    ret = CreateAndDecode<PySubStream>(opcode);
                     break;
                 case MarshalOpcode.SavedStreamElement:
                     uint index = reader.ReadSizeEx();
@@ -172,10 +174,10 @@ namespace eveMarshal
                     break;
                 case MarshalOpcode.ObjectEx1:
                 case MarshalOpcode.ObjectEx2:
-                    ret = CreateAndDecode<PyObjectEx>(reader, opcode);
+                    ret = CreateAndDecode<PyObjectEx>(opcode);
                     break;
                 case MarshalOpcode.PackedRow:
-                    ret = CreateAndDecode<PyPackedRow>(reader, opcode);
+                    ret = CreateAndDecode<PyPackedRow>(opcode);
                     break;
                 default:
                     throw new InvalidDataException("Failed to marshal " + opcode);
@@ -206,12 +208,6 @@ namespace eveMarshal
                 return analyse(ret);
             }
             return ret;
-        }
-
-        public static T Process<T>(byte[] data) where T : class
-        {
-            var un = new Unmarshal();
-            return un.Process(data) as T;
         }
 
         private PyRep analyse(PyRep obj)

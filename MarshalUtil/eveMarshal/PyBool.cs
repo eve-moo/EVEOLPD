@@ -16,7 +16,7 @@ namespace eveMarshal
             Value = val;
         }
 
-        public override void Decode(Unmarshal context, MarshalOpcode op, BinaryReader source)
+        public override void Decode(Unmarshal context, MarshalOpcode op)
         {
             switch (op)
             {

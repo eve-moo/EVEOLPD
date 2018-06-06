@@ -19,12 +19,12 @@ namespace eveMarshal
             Value = value;
         }
 
-        public override void Decode(Unmarshal context, MarshalOpcode op, BinaryReader source)
+        public override void Decode(Unmarshal context, MarshalOpcode op)
         {
             if (op == MarshalOpcode.RealZero)
                 Value = 0.0d;
             else
-                Value = source.ReadDouble();
+                Value = context.reader.ReadDouble();
         }
 
         protected override void EncodeInternal(BinaryWriter output)

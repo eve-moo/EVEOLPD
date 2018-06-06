@@ -105,6 +105,7 @@ namespace MarshalUtil
             if (!packetSubDirs.Checked)
             {
                 ProcessStatus prc = new ProcessStatus(lastPath);
+                prc.analizeInput = selectAnalize.Checked;
                 progressIndicators.Controls.Add(prc);
             }
             else
@@ -114,6 +115,7 @@ namespace MarshalUtil
                 foreach (string dir in dirs)
                 {
                     ProcessStatus prc = new ProcessStatus(dir);
+                    prc.analizeInput = selectAnalize.Checked;
                     progressIndicators.Controls.Add(prc);
                 }
             }

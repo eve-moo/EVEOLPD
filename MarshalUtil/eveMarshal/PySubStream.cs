@@ -30,11 +30,12 @@ namespace eveMarshal
             Data = data;
         }
 
-        public override void Decode(Unmarshal context, MarshalOpcode op, BinaryReader source)
+        public override void Decode(Unmarshal context, MarshalOpcode op)
         {
-            uint len = source.ReadSizeEx();
-            RawData = source.ReadBytes((int) len);
+            uint len = context.reader.ReadSizeEx();
+            RawData = context.reader.ReadBytes((int) len);
             DataUnmarshal = new Unmarshal();
+            DataUnmarshal.analizeInput = context.analizeInput;
             Data = DataUnmarshal.Process(RawData);
         }
 

@@ -23,7 +23,7 @@ namespace eveMarshal
             Data = data;
         }
 
-        public override void Decode(Unmarshal context, MarshalOpcode op, BinaryReader source)
+        public override void Decode(Unmarshal context, MarshalOpcode op)
         {
             throw new NotImplementedException();
         }

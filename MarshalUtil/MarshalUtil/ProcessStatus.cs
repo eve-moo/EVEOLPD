@@ -10,6 +10,7 @@ namespace MarshalUtil
     {
         string[] PACKET_FILES = new string[] { };
         string workingDirectory = null;
+        public bool analizeInput = false;
 
         public ProcessStatus(string dir)
         {
@@ -181,6 +182,7 @@ namespace MarshalUtil
                 thread = null;
                 completeAction = null;
             }
+            addText("Process finished.");
             pool.Release();
         }
 
@@ -189,6 +191,7 @@ namespace MarshalUtil
             // Does the file exist?
             if (!File.Exists(filename))
             {
+                addText("File not found: " + filename);
                 // No, fail!
                 return false;
             }
@@ -230,12 +233,18 @@ namespace MarshalUtil
             if (data[0] != HeaderByte)
             {
                 // No, is this a python file? If yes, ignore it but dont cause an error.
+                if(data[0] == PythonMarker)
+                {
+                    //string py = PrettyPrinter.ByteArrayToString(data);
+                    //addText("Found python file: " + py);
+                }
                 return data[0] == PythonMarker;
             }
             bool decodeDone = false;
             try
             {
                 Unmarshal un = new Unmarshal();
+                un.analizeInput = analizeInput;
                 PyRep obj = un.Process(data);
                 decodeDone = true;
                 obj = analyse(obj, filename);

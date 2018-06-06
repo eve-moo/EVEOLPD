@@ -35,6 +35,7 @@
             this.packetSubDirs = new System.Windows.Forms.CheckBox();
             this.progressBar2 = new System.Windows.Forms.ProgressBar();
             this.progressIndicators = new System.Windows.Forms.FlowLayoutPanel();
+            this.selectAnalize = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // button1
@@ -63,9 +64,9 @@
             this.btnProcess.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.btnProcess.Enabled = false;
-            this.btnProcess.Location = new System.Drawing.Point(237, 41);
+            this.btnProcess.Location = new System.Drawing.Point(332, 41);
             this.btnProcess.Name = "btnProcess";
-            this.btnProcess.Size = new System.Drawing.Size(243, 23);
+            this.btnProcess.Size = new System.Drawing.Size(148, 23);
             this.btnProcess.TabIndex = 2;
             this.btnProcess.Text = "Process";
             this.btnProcess.UseVisualStyleBackColor = true;
@@ -86,7 +87,7 @@
             // packetSubDirs
             // 
             this.packetSubDirs.AutoSize = true;
-            this.packetSubDirs.Location = new System.Drawing.Point(93, 45);
+            this.packetSubDirs.Location = new System.Drawing.Point(80, 45);
             this.packetSubDirs.Name = "packetSubDirs";
             this.packetSubDirs.Size = new System.Drawing.Size(138, 17);
             this.packetSubDirs.TabIndex = 6;
@@ -113,11 +114,24 @@
             this.progressIndicators.Size = new System.Drawing.Size(468, 244);
             this.progressIndicators.TabIndex = 8;
             // 
+            // selectAnalize
+            // 
+            this.selectAnalize.AutoSize = true;
+            this.selectAnalize.Checked = true;
+            this.selectAnalize.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.selectAnalize.Location = new System.Drawing.Point(224, 45);
+            this.selectAnalize.Name = "selectAnalize";
+            this.selectAnalize.Size = new System.Drawing.Size(102, 17);
+            this.selectAnalize.TabIndex = 9;
+            this.selectAnalize.Text = "Analize Packets";
+            this.selectAnalize.UseVisualStyleBackColor = true;
+            // 
             // Form2
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(492, 354);
+            this.Controls.Add(this.selectAnalize);
             this.Controls.Add(this.progressIndicators);
             this.Controls.Add(this.progressBar2);
             this.Controls.Add(this.packetSubDirs);
@@ -142,5 +156,6 @@
         private System.Windows.Forms.CheckBox packetSubDirs;
         private System.Windows.Forms.ProgressBar progressBar2;
         private System.Windows.Forms.FlowLayoutPanel progressIndicators;
+        private System.Windows.Forms.CheckBox selectAnalize;
     }
 }

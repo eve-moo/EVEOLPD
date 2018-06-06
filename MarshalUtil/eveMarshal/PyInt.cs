@@ -20,7 +20,7 @@ namespace eveMarshal
             Value = val;
         }
 
-        public override void Decode(Unmarshal context, MarshalOpcode op, BinaryReader source)
+        public override void Decode(Unmarshal context, MarshalOpcode op)
         {
             if (op == MarshalOpcode.IntegerOne)
                 Value = 1;
@@ -29,11 +29,11 @@ namespace eveMarshal
             else if (op == MarshalOpcode.IntegerMinusOne)
                 Value = -1;
             else if (op == MarshalOpcode.IntegerByte)
-                Value = source.ReadByte();
+                Value = context.reader.ReadByte();
             else if (op == MarshalOpcode.IntegerSignedShort)
-                Value = source.ReadInt16();
+                Value = context.reader.ReadInt16();
             else if (op == MarshalOpcode.IntegerLong)
-                Value = source.ReadInt32();
+                Value = context.reader.ReadInt32();
         }
 
         protected override void EncodeInternal(BinaryWriter output)

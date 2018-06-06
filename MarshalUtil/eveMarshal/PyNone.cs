@@ -12,7 +12,7 @@ namespace eveMarshal
             
         }
 
-        public override void Decode(Unmarshal context, MarshalOpcode op, BinaryReader source)
+        public override void Decode(Unmarshal context, MarshalOpcode op)
         {
         }
 

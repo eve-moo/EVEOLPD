@@ -28,7 +28,7 @@ namespace eveMarshal
             
         }
 
-        public override void Decode(Unmarshal context, MarshalOpcode op, BinaryReader source)
+        public override void Decode(Unmarshal context, MarshalOpcode op)
         {
             if (op == MarshalOpcode.ObjectEx2)
             {
@@ -37,25 +37,25 @@ namespace eveMarshal
 
             Dictionary = new Dictionary<PyRep, PyRep>();
             List = new List<PyRep>();
-            Header = context.ReadObject(source);
+            Header = context.ReadObject();
 
-            while (source.BaseStream.Position < source.BaseStream.Length)
+            while (context.reader.BaseStream.Position < context.reader.BaseStream.Length)
             {
-                var b = source.ReadByte();
+                var b = context.reader.ReadByte();
                 if (b == PackedTerminator)
                     break;
-                source.BaseStream.Seek(-1, SeekOrigin.Current);
-                List.Add(context.ReadObject(source));
+                context.reader.BaseStream.Seek(-1, SeekOrigin.Current);
+                List.Add(context.ReadObject());
             }
 
-            while (source.BaseStream.Position < source.BaseStream.Length)
+            while (context.reader.BaseStream.Position < context.reader.BaseStream.Length)
             {
-                var b = source.ReadByte();
+                var b = context.reader.ReadByte();
                 if (b == PackedTerminator)
                     break;
-                source.BaseStream.Seek(-1, SeekOrigin.Current);
-                var key = context.ReadObject(source);
-                var value = context.ReadObject(source);
+                context.reader.BaseStream.Seek(-1, SeekOrigin.Current);
+                var key = context.ReadObject();
+                var value = context.ReadObject();
                 Dictionary.Add(key, value);
             }
         }

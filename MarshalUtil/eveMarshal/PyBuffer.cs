@@ -27,10 +27,10 @@ namespace eveMarshal
             Data = Encoding.ASCII.GetBytes(data);
         }
 
-        public override void Decode(Unmarshal context, MarshalOpcode op, BinaryReader source)
+        public override void Decode(Unmarshal context, MarshalOpcode op)
         {
-            var size = source.ReadSizeEx();
-            Data = source.ReadBytes((int)size);
+            var size = context.reader.ReadSizeEx();
+            Data = context.reader.ReadBytes((int)size);
         }
 
         protected override void EncodeInternal(BinaryWriter output)

@@ -12,6 +12,7 @@ namespace eveMarshal
     public class PyPackedRow : PyRep
     {
         public DBRowDescriptor Descriptor { get; private set; }
+        public PyRep DescriptorObj { get; private set; }
         public byte[] RawData { get; private set; }
 
         public PyRep[] values { get; private set; }
@@ -34,24 +35,35 @@ namespace eveMarshal
             return values[index];
         }
 
-        public override void Decode(Unmarshal context, MarshalOpcode op, BinaryReader source)
+        public override void Decode(Unmarshal context, MarshalOpcode op)
         {
-            PyRep obj = context.ReadObject(source);
+            PyRep obj = context.ReadObject();
             Descriptor = obj as DBRowDescriptor;
             if(Descriptor == null)
             {
-                throw new InvalidDataException("PyPackedRow: Header must be DBRowDescriptor got " + obj.Type);
+                if (!context.analizeInput && obj is PyObjectEx)
+                {
+                    DescriptorObj = obj;
+                }
+                else
+                {
+                    throw new InvalidDataException("PyPackedRow: Header must be DBRowDescriptor got " + obj.Type);
+                }
             }
-            RawData = LoadZeroCompressed(source);
+            RawData = LoadZeroCompressed(context);
 
-            if (!ParseRowData(context, source))
+            if (!ParseRowData(context))
                  throw new InvalidDataException("Could not fully unpack PackedRow, stream integrity is broken");
         }
 
-        private bool ParseRowData(Unmarshal context, BinaryReader source)
+        private bool ParseRowData(Unmarshal context)
         {
             if (Descriptor == null)
             {
+                if(DescriptorObj != null)
+                {
+                    return true;
+                }
                 return false;
             }
 
@@ -109,7 +121,7 @@ namespace eveMarshal
                     case FieldType.Bytes:
                     case FieldType.Str:
                     case FieldType.WStr:
-                        value = context.ReadObject(source);
+                        value = context.ReadObject();
                         break;
 
                     case FieldType.Bool:
@@ -140,14 +152,14 @@ namespace eveMarshal
             return true;
         }
 
-        private static byte[] LoadZeroCompressed(BinaryReader reader)
+        private static byte[] LoadZeroCompressed(Unmarshal context)
         {
             var ret = new List<byte>();
-            uint packedLen = reader.ReadSizeEx();
-            long max = reader.BaseStream.Position + packedLen;
-            while (reader.BaseStream.Position < max)
+            uint packedLen = context.reader.ReadSizeEx();
+            long max = context.reader.BaseStream.Position + packedLen;
+            while (context.reader.BaseStream.Position < max)
             {
-                var opcode = new ZeroCompressOpcode(reader.ReadByte());
+                var opcode = new ZeroCompressOpcode(context.reader.ReadByte());
 
                 if (opcode.FirstIsZero)
                 {
@@ -156,9 +168,9 @@ namespace eveMarshal
                 }
                 else
                 {
-                    int bytes = (int)Math.Min(8 - opcode.FirstLength, max - reader.BaseStream.Position);
+                    int bytes = (int)Math.Min(8 - opcode.FirstLength, max - context.reader.BaseStream.Position);
                     for (int n = 0; n < bytes; n++)
-                        ret.Add(reader.ReadByte());
+                        ret.Add(context.reader.ReadByte());
                 }
 
                 if (opcode.SecondIsZero)
@@ -168,9 +180,9 @@ namespace eveMarshal
                 }
                 else
                 {
-                    int bytes = (int)Math.Min(8 - opcode.SecondLength, max - reader.BaseStream.Position);
+                    int bytes = (int)Math.Min(8 - opcode.SecondLength, max - context.reader.BaseStream.Position);
                     for (int n = 0; n < bytes; n++)
-                        ret.Add(reader.ReadByte());
+                        ret.Add(context.reader.ReadByte());
                 }
             }
             return ret.ToArray();
@@ -186,18 +198,32 @@ namespace eveMarshal
             StringBuilder builder = new StringBuilder();
             string pfx1 = prefix + PrettyPrinter.Spacer;
             builder.AppendLine("[PyPackedRow " + RawData.Length + " bytes]");
-            if (Descriptor.Columns != null)
+            if (Descriptor != null)
             {
-                foreach (var column in Descriptor.Columns)
+                if (Descriptor.Columns != null)
                 {
-                    int index = Descriptor.Columns.FindIndex(x => x.Name == column.Name);
-                    PyRep value = values[index];
-                    builder.AppendLine(pfx1 + "[\"" + column.Name + "\" => " + " [" + column.Type + "] " + value + "]");
+                    foreach (var column in Descriptor.Columns)
+                    {
+                        int index = Descriptor.Columns.FindIndex(x => x.Name == column.Name);
+                        PyRep value = values[index];
+                        builder.AppendLine(pfx1 + "[\"" + column.Name + "\" => " + " [" + column.Type + "] " + value + "]");
+                    }
+                }
+                else
+                {
+                    builder.AppendLine(pfx1 + "[Columns parsing failed!]");
                 }
             }
             else
             {
-                builder.AppendLine(pfx1 + "[Columns parsing failed!]");
+                if(DescriptorObj != null)
+                {
+                    builder.Append(pfx1 + DescriptorObj.dump(pfx1));
+                }
+                else
+                {
+                    builder.Append("Error.. Obj missing.");
+                }
             }
             return builder.ToString();
         }

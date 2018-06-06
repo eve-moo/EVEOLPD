@@ -91,7 +91,7 @@ namespace eveMarshal
             return addr;
         }
 
-        public override void Decode(Unmarshal context, MarshalOpcode op, BinaryReader source)
+        public override void Decode(Unmarshal context, MarshalOpcode op)
         {
             throw new InvalidOperationException("Function Not Implemented.");
         }
