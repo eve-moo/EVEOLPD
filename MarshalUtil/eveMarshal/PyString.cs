@@ -10,11 +10,12 @@ namespace eveMarshal
         public string Value { get; private set; }
         public byte[] Raw { get; private set; }
         public bool ForceUTF8 { get; private set; }
+        public MarshalOpcode opCode = MarshalOpcode.Error;
+        public int tableIndex = -1;
 
         public PyString()
             : base(PyObjectType.String)
         {
-            
         }
 
         public PyString(string data)
@@ -59,6 +60,7 @@ namespace eveMarshal
 
         public override void Decode(Unmarshal context, MarshalOpcode op, BinaryReader source)
         {
+            opCode = op;
             if (op == MarshalOpcode.StringEmpty)
                 Update(new byte[0]);
             else if (op == MarshalOpcode.StringChar)
@@ -77,8 +79,8 @@ namespace eveMarshal
                 Update(source.ReadBytes((int)source.ReadSizeEx()));
             else if (op == MarshalOpcode.StringTable)
             {
-                byte index = source.ReadByte();
-                Update(StringTable.Entries[index-1]);
+                tableIndex = source.ReadByte();
+                Update(StringTable.Entries[tableIndex-1]);
             }
         }
 
@@ -133,6 +135,44 @@ namespace eveMarshal
 
         public override string dump(string prefix)
         {
+            string name = "Unknown";
+            if (opCode == MarshalOpcode.StringEmpty)
+            {
+                name = "PyStringEmpty";
+            }
+            else if (opCode == MarshalOpcode.StringChar)
+            {
+                name = "PyStringChar";
+            }
+            else if (opCode == MarshalOpcode.WStringUTF8)
+            {
+                name = "PyWStringUTF8";
+            }
+            else if (opCode == MarshalOpcode.WStringUCS2Char)
+            {
+                name = "PyWStringUCS2Char";
+            }
+            else if (opCode == MarshalOpcode.WStringEmpty)
+            {
+                name = "PyWStringEmpty";
+            }
+            else if (opCode == MarshalOpcode.WStringUCS2)
+            {
+                name = "PyWStringUCS2";
+            }
+            else if (opCode == MarshalOpcode.StringShort)
+            {
+                name = "PyString";
+            }
+            else if (opCode == MarshalOpcode.StringLong)
+            {
+                name = "PyString";
+            }
+            else if (opCode == MarshalOpcode.StringTable)
+            {
+                name = "PyStringTable[" + tableIndex.ToString() + "]";
+            }
+
             if (Raw.Length > 0 && (Raw[0] == (byte)Unmarshal.ZlibMarker || Raw[0] == (byte)Unmarshal.HeaderByte))
             {
                 // We have serialized python data, decode and display it.
@@ -148,7 +188,7 @@ namespace eveMarshal
                         {
                             sType = "<serialized-compressed>";
                         }
-                        return "[PyString " + sType + Environment.NewLine + pfx1 + obj.dump(pfx1) + Environment.NewLine + prefix + "]";
+                        return "[" + name + " " + sType + Environment.NewLine + pfx1 + obj.dump(pfx1) + Environment.NewLine + prefix + "]";
                     }
                 }
                 catch (Exception)
@@ -157,11 +197,11 @@ namespace eveMarshal
             }
             if (!PrettyPrinter.containsBinary(Raw))
             {
-                return "[PyString \"" + Value + "\"]";
+                return "[" + name + " \"" + Value + "\"]";
             }
             else
             {
-                return "[PyString \"" + Value + "\"" + Environment.NewLine + prefix + "          <binary len=" + Value.Length + "> hex=\"" + PrettyPrinter.ByteArrayToString(Raw) + "\"]";
+                return "[" + name + " \"" + Value + "\"" + Environment.NewLine + prefix + "          <binary len=" + Value.Length + "> hex=\"" + PrettyPrinter.ByteArrayToString(Raw) + "\"]";
             }
         }
 
