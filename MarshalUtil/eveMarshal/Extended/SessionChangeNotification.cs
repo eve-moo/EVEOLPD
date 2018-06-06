@@ -7,7 +7,7 @@ namespace eveMarshal.Extended
 {
     public class SessionChangeNotification : ExtendedObject
     {
-        Int32 sessionID;
+        UInt64 sessionID;
         Int32 clueless;
         PyDict Changes;
         List<Int32> nodesOfInterest = new List<Int32>();
@@ -29,7 +29,7 @@ namespace eveMarshal.Extended
                     tup.Items[0].Type.ToString() + ", " + tup.Items[1].Type.ToString() + ", " + tup.Items[2].Type.ToString()
                     );
             }
-            sessionID = (Int32)tup.Items[0].IntValue;
+            sessionID = (UInt64)tup.Items[0].IntValue;
             PyList list = tup.Items[2] as PyList;
             foreach(var node in list.Items)
             {
