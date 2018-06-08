@@ -55,43 +55,44 @@ namespace eveMarshal.Extended
             }
         }
 
-        public override string dump(string prefix)
+        public override void dump(PrettyPrinter printer)
         {
-            string pfx1 = prefix + PrettyPrinter.Spacer;
-            string pfx2 = pfx1 + PrettyPrinter.Spacer;
-            string pfx3 = pfx2 + PrettyPrinter.Spacer;
-            StringBuilder builder = new StringBuilder();
-            builder.AppendLine("[CallMachoBindObject]:");
-            builder.AppendLine(pfx1 + "Bind Arguments:");
+            printer.addLine("[CallMachoBindObject]:");
+            printer.indentLevel++;
+            printer.addLine("Bind Arguments:");
             if (bindArgs != null)
             {
-                PrettyPrinter.Print(builder, pfx2, bindArgs);
+                printer.addItem(bindArgs);
             }
             else
             {
+                printer.indentLevel++;
                 if (locationID == 0)
                 {
                     if (characterID == 0)
                     {
-                        builder.AppendLine(pfx2 + "<nullptr>");
+                        printer.addLine("<nullptr>");
                     }
                     else
                     {
-                        builder.AppendLine(pfx2 + "characterID: " + characterID);
+                        printer.addLine("characterID: " + characterID);
                     }
                 }
                 else
                 {
-                    builder.AppendLine(pfx2 + "LocationID: " + locationID);
-                    builder.AppendLine(pfx2 + "LocationGourpID: " + locationGroupID);
+                    printer.addLine("LocationID: " + locationID);
+                    printer.addLine("LocationGourpID: " + locationGroupID);
                 }
+                printer.indentLevel--;
             }
-            builder.AppendLine(pfx1 + "Call: '" + callMethod + "'");
-            builder.AppendLine(pfx2 + "Call Arguments:");
-            PrettyPrinter.Print(builder, pfx3, callTuple);
-            builder.AppendLine(pfx2 + "Call Named Arguments:");
-            PrettyPrinter.Print(builder, pfx3, callDict);
-            return builder.ToString();
+            printer.addLine("Call: '" + callMethod + "'");
+            printer.indentLevel++;
+            printer.addLine("Call Arguments:");
+            printer.addItem(callTuple);
+            printer.addLine("Call Named Arguments:");
+            printer.addItem(callDict);
+            printer.indentLevel--;
+            printer.indentLevel--;
         }
     }
 }

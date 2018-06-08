@@ -110,21 +110,19 @@ namespace eveMarshal
         {
             throw new InvalidOperationException("Function Not Implemented.");
         }
-        public override string dump(string prefix)
+        public override void dump(PrettyPrinter printer)
         {
-            string pfx1 = prefix + PrettyPrinter.Spacer;
-            string pfx2 = pfx1 + PrettyPrinter.Spacer;
-            StringBuilder builder = new StringBuilder();
-            builder.AppendLine("[PyPacket typeID=" + packetType + "  userID=" + userID + "  name='" + typeString + "']");
-            builder.AppendLine(pfx1 + "Source:");
-            PrettyPrinter.Print(builder, pfx2, source);
-            builder.AppendLine(pfx1 + "Destination:");
-            PrettyPrinter.Print(builder, pfx2, dest);
-            builder.AppendLine(pfx1 + "Payload:");
-            PrettyPrinter.Print(builder, pfx2, payload);
-            builder.AppendLine(pfx1 + "Named Payload:");
-            PrettyPrinter.Print(builder, pfx2, namedPayload);
-            return builder.ToString();
+            printer.addLine("[PyPacket typeID=" + packetType + "  userID=" + userID + "  name='" + typeString + "']");
+            printer.indentLevel++;
+            printer.addLine("Source:");
+            printer.addItem(source);
+            printer.addLine("Destination:");
+            printer.addItem(dest);
+            printer.addLine("Payload:");
+            printer.addItem(payload);
+            printer.addLine("Named Payload:");
+            printer.addItem(namedPayload);
+            printer.indentLevel--;
         }
     }
 }

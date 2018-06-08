@@ -10,6 +10,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarshalUtil", "MarshalUtil\
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eveMarshal", "eveMarshal\eveMarshal.csproj", "{41D634C1-627E-4DC4-8878-8BC486CA0B81}"
+	ProjectSection(ProjectDependencies) = postProject
+		{7783935E-EEA2-401C-A839-3D698EDF6CE6} = {7783935E-EEA2-401C-A839-3D698EDF6CE6}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PyDecomp", "..\PyDecomp\PyDecomp.csproj", "{7783935E-EEA2-401C-A839-3D698EDF6CE6}"
 EndProject

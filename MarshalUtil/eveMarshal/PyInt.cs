@@ -66,9 +66,9 @@ namespace eveMarshal
             return "<" + Value + ">";
         }
 
-        public override string dump(string prefix)
+        public override void dump(PrettyPrinter printer)
         {
-            return "[PyInt " + Value + "]";
+            printer.addLine("[PyInt " + Value + "]");
         }
     }
 

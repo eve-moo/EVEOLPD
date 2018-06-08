@@ -26,13 +26,10 @@ namespace eveMarshal.Extended
             notice = args;
         }
 
-        public override string dump(string prefix)
+        public override void dump(PrettyPrinter printer)
         {
-            string pfx1 = prefix + PrettyPrinter.Spacer;
-            StringBuilder builder = new StringBuilder();
-            builder.AppendLine("[NotificationStream " + (zeroOne == 0 ? "Tuple01" : "SubStream") + "]");
-            PrettyPrinter.Print(builder, pfx1, notice);
-            return builder.ToString();
+            printer.addLine("[NotificationStream " + (zeroOne == 0 ? "Tuple01" : "SubStream") + "]");
+            printer.addItem(notice);
         }
     }
 }

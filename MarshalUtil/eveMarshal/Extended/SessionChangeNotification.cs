@@ -54,28 +54,31 @@ namespace eveMarshal.Extended
             clueless = (Int32)tup1.Items[0].IntValue;
         }
 
-        public override string dump(string prefix)
+        public override void dump(PrettyPrinter printer)
         {
-            string pfx1 = prefix + PrettyPrinter.Spacer;
-            string pfx2 = pfx1 + PrettyPrinter.Spacer;
-            StringBuilder builder = new StringBuilder();
-            builder.AppendLine("[SessionChangeNotification]");
-            builder.AppendLine(pfx1 + "sessionID=" + sessionID);
-            builder.AppendLine(pfx1 + "clueless=" + clueless);
-            builder.AppendLine(pfx1 + "Nodes:");
+            printer.addLine("[SessionChangeNotification]");
+            printer.indentLevel++;
+            printer.addLine("sessionID=" + sessionID);
+            printer.addLine("clueless=" + clueless);
+            printer.addLine("Nodes:");
             foreach(var node in nodesOfInterest)
             {
-                builder.AppendLine(pfx2 + node);
+                printer.indentLevel++;
+                printer.addLine(node.ToString());
+                printer.indentLevel--;
             }
-            builder.AppendLine(pfx1 + "Changes");
+            printer.addLine("Changes:");
             if (Changes == null)
             {
-                builder.AppendLine(pfx2 + "<nullptr>");
+                printer.indentLevel++;
+                printer.addLine("<nullptr>");
+                printer.indentLevel--;
             }
-            else {
-                PrettyPrinter.Print(builder, pfx2, Changes);
+            else
+            {
+                printer.addItem(Changes);
             }
-            return builder.ToString();
+            printer.indentLevel++;
         }
     }
 }

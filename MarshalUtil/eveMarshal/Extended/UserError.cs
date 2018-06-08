@@ -66,23 +66,21 @@ namespace eveMarshal.Extended
             }
         }
 
-        public override string dump(string prefix)
+        public override void dump(PrettyPrinter printer)
         {
-            string pfx1 = prefix + PrettyPrinter.Spacer;
-            string pfx2 = pfx1 + PrettyPrinter.Spacer;
-            StringBuilder builder = new StringBuilder();
-            builder.AppendLine("[UserError]");
-            builder.AppendLine(pfx1 + "Message: " + message);
+            printer.addLine("[UserError]");
+            printer.indentLevel++;
+            printer.addLine("Message: " + message);
             if (dict != null)
             {
-                builder.AppendLine(pfx1 + "Parameters:");
-                builder.AppendLine(pfx2 + dict.dump(pfx2));
+                printer.addLine("Parameters:");
+                printer.addItem(dict);
             }
             else
             {
-                builder.AppendLine(pfx1 + "No parameters.");
+                printer.addLine("No parameters.");
             }
-            return builder.ToString();
+            printer.indentLevel--;
         }
     }
 }

@@ -99,25 +99,25 @@ namespace eveMarshal
             return sb.ToString();
         }
 
-        public override string dump(string prefix)
+        public override void dump(PrettyPrinter printer)
         {
-            StringBuilder builder = new StringBuilder();
-            string pfx1 = prefix + PrettyPrinter.Spacer;
-            string pfx2 = pfx1 + PrettyPrinter.Spacer + PrettyPrinter.Spacer;
-            builder.AppendLine("[PyDict " + Dictionary.Count + " kvp]" + PrettyPrinter.PrintRawData(this));
+            printer.addLine("[PyDict " + Dictionary.Count + " kvp]" + PrettyPrinter.PrintRawData(this));
+            printer.indentLevel++;
             foreach (var kvp in Dictionary)
             {
-                PrettyPrinter.Print(builder, pfx1 + "Key:", kvp.Key);
+                printer.addLine("Key:");
+                printer.addItem(kvp.Key);
                 if (kvp.Value == null)
                 {
-                    builder.AppendLine(pfx1 + "==Value: <nullptr>");
+                    printer.addLine("Value: <nullptr>");
                 }
                 else
                 {
-                    builder.AppendLine(pfx1 + "==Value:" + kvp.Value.dump(pfx2).TrimEnd('\r', '\n'));
+                    printer.addLine("Value:");
+                    printer.addItem(kvp.Value);
                 }
             }
-            return builder.ToString();
+            printer.indentLevel--;
         }
 
     }

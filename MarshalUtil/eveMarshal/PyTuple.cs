@@ -101,22 +101,20 @@ namespace eveMarshal
             return GetEnumerator();
         }
 
-        public override string dump(string prefix)
+        public override void dump(PrettyPrinter printer)
         {
-            StringBuilder builder = new StringBuilder();
-            builder.AppendLine("[PyTuple " + Items.Count + " items]" + PrettyPrinter.PrintRawData(this));
+            printer.addLine("[PyTuple " + Items.Count + " items]" + PrettyPrinter.PrintRawData(this));
             foreach (var item in Items)
             {
                 if (item != null)
                 {
-                    PrettyPrinter.Print(builder, prefix + PrettyPrinter.Spacer, item);
+                    printer.addItem(item);
                 }
                 else
                 {
-                    builder.AppendLine("<nullptr>");
+                    printer.addLine("<nullptr>");
                 }
             }
-            return builder.ToString();
         }
     }
 

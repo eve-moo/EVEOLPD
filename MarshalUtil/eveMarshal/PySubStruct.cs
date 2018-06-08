@@ -25,12 +25,10 @@ namespace eveMarshal
             Definition.Encode(output);
         }
 
-        public override string dump(string prefix)
+        public override void dump(PrettyPrinter printer)
         {
-            StringBuilder builder = new StringBuilder();
-            builder.AppendLine("[PySubStruct]");
-            PrettyPrinter.Print(builder, prefix + PrettyPrinter.Spacer, Definition);
-            return builder.ToString();
+            printer.addLine("[PySubStruct]");
+            printer.addItem(Definition);
         }
 
     }

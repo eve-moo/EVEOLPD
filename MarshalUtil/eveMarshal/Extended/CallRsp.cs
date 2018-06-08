@@ -45,13 +45,10 @@ namespace eveMarshal.Extended
             }
         }
 
-        public override string dump(string prefix)
+        public override void dump(PrettyPrinter printer)
         {
-            string pfx1 = prefix + PrettyPrinter.Spacer;
-            StringBuilder builder = new StringBuilder();
-            builder.AppendLine("[CallRsp " + (subStream ? "PySubStream" : "PyTuple") + "]");
-            PrettyPrinter.Print(builder, pfx1, response);
-            return builder.ToString();
+            printer.addLine("[CallRsp " + (subStream ? "PySubStream" : "PyTuple") + "]");
+            printer.addItem(response);
         }
     }
 }

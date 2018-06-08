@@ -39,12 +39,10 @@ namespace eveMarshal
             output.Write(data);
         }
 
-        public override string dump(string prefix)
+        public override void dump(PrettyPrinter printer)
         {
-            StringBuilder builder = new StringBuilder();
-            builder.AppendLine("[PyChecksumedStream Checksum: " + Checksum + "]");
-            PrettyPrinter.Print(builder, prefix + PrettyPrinter.Spacer, Data);
-            return builder.ToString();
+            printer.addLine("[PyChecksumedStream Checksum: " + Checksum + "]");
+            printer.addItem(Data);
         }
     }
 

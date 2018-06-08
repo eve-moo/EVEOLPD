@@ -84,9 +84,9 @@ namespace eveMarshal
             output.Write(Raw);
         }
 
-        public override string dump(string prefix)
+        public override void dump(PrettyPrinter printer)
         {
-            return "[PyIntegerVar " + IntValue + "]";
+            printer.addLine("[PyIntegerVar " + IntValue + "]");
         }
     }
 

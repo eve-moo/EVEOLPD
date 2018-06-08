@@ -12,6 +12,7 @@ namespace eveMarshal
         public const byte SaveMask = 0x40;
         public const byte UnknownMask = 0x80;
         public const byte HeaderByte = 0x7E;
+        public const byte PythonMarker = 0x03;
 
         // not a real magic since zlib just doesn't include one..
         public const byte ZlibMarker = 0x78;
@@ -33,7 +34,17 @@ namespace eveMarshal
             if (data == null)
                 return null;
             if (data[0] == ZlibMarker)
-                data = Zlib.Decompress(data);
+            {
+                byte[] d = Zlib.Decompress(data);
+                if(d != null)
+                {
+                    data = d;
+                }
+                else
+                {
+                    return null;
+                }
+            }
             reader = new BinaryReader(new MemoryStream(data), Encoding.ASCII);
             return Process();
         }
@@ -43,6 +54,10 @@ namespace eveMarshal
             var magic = reader.ReadByte();
             if (magic != HeaderByte)
             {
+                if(magic == 0x03)
+                {
+                    // We have a python file.
+                }
                 throw new InvalidDataException("Invalid magic, expected: " + HeaderByte + " read: " + magic);
             }
             var saveCount = reader.ReadUInt32();

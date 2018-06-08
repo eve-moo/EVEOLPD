@@ -52,9 +52,9 @@ namespace eveMarshal
             return "<" + Token + ">";
         }
 
-        public override string dump(string prefix)
+        public override void dump(PrettyPrinter printer)
         {
-            return "[PyToken " + Token + "]" + PrettyPrinter.PrintRawData(this);
+            printer.addLine("[PyToken " + Token + "]" + PrettyPrinter.PrintRawData(this));
         }
    }
 

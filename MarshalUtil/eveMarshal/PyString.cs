@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Python;
+using System;
 using System.IO;
 using System.Text;
 
@@ -135,7 +136,7 @@ namespace eveMarshal
             return "<" + BitConverter.ToString(Raw) + ">";
         }
 
-        public override string dump(string prefix)
+        public override void dump(PrettyPrinter printer)
         {
             string name = "Unknown";
             if (opCode == MarshalOpcode.StringEmpty)
@@ -175,11 +176,32 @@ namespace eveMarshal
                 name = "PyStringTable[" + tableIndex.ToString() + "]";
             }
 
-            if (Raw.Length > 0 && (Raw[0] == (byte)Unmarshal.ZlibMarker || Raw[0] == (byte)Unmarshal.HeaderByte))
+            bool printed = false;
+            if (Raw.Length > 0 && (Raw[0] == (byte)Unmarshal.ZlibMarker || Raw[0] == (byte)Unmarshal.HeaderByte || Raw[0] == Unmarshal.PythonMarker))
             {
                 // We have serialized python data, decode and display it.
-                string pfx1 = prefix + PrettyPrinter.Spacer;
-                try
+                byte[] d = Raw;
+                if (d[0] == Unmarshal.ZlibMarker)
+                {
+                    d = Zlib.Decompress(d);
+                }
+                if (d != null && d[0] == Unmarshal.PythonMarker && printer.decompilePython)
+                {
+                    // We have a python file.
+                    Bytecode code = new Bytecode();
+                    if (code.load(d, true))
+                    {
+                        printer.addLine("[" + name);
+                        Python.PrettyPrinter pp = new Python.PrettyPrinter();
+                        pp.indent = printer.indent;
+                        pp.indentLevel = printer.indentLevel + 1;
+                        code.dump(pp);
+                        printer.addLine(pp.dump);
+                        printer.addLine("]");
+                        printed = true;
+                    }
+                }
+                else
                 {
                     Unmarshal un = new Unmarshal();
                     un.analizeInput = decodedAnalized;
@@ -191,20 +213,26 @@ namespace eveMarshal
                         {
                             sType = "<serialized-compressed>";
                         }
-                        return "[" + name + " " + sType + Environment.NewLine + pfx1 + obj.dump(pfx1) + Environment.NewLine + prefix + "]";
+                        printer.addLine("[" + name + " " + sType);
+                        printer.addItem(obj);
+                        printer.addLine("]");
+                        printed = true;
                     }
                 }
-                catch (Exception)
+            }
+            if (!printed)
+            {
+                if (!PrettyPrinter.containsBinary(Raw))
                 {
+                    printer.addLine("[" + name + " \"" + Value + "\"]");
                 }
-            }
-            if (!PrettyPrinter.containsBinary(Raw))
-            {
-                return "[" + name + " \"" + Value + "\"]";
-            }
-            else
-            {
-                return "[" + name + " \"" + Value + "\"" + Environment.NewLine + prefix + "          <binary len=" + Value.Length + "> hex=\"" + PrettyPrinter.ByteArrayToString(Raw) + "\"]";
+                else
+                {
+                    printer.addLine("[" + name + " \"" + Value + "\"");
+                    printer.indentLevel += 2;
+                    printer.addLine("<binary len=" + Value.Length + "> hex=\"" + PrettyPrinter.ByteArrayToString(Raw) + "\"]");
+                    printer.indentLevel -= 2;
+                }
             }
         }
 

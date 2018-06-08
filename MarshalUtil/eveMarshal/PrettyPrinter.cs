@@ -1,38 +1,66 @@
 ﻿using System;
+using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 
 namespace eveMarshal
 {
-
-    public static class PrettyPrinter
+    public class PrettyPrinter
     {
+        public PrettyPrinter()
+        {
+        }
         public const string Spacer = "    ";
+        public bool analizeInput = false;
+        public bool decompilePython = false;
+        public string indent = Spacer;
+        public int indentLevel;
+        public bool interp;
+        public StringBuilder builder;
 
-        public static bool IsASCII(this string value)
+        public string getIndent(int extra = 0)
+        {
+            return string.Concat(Enumerable.Repeat(indent, indentLevel + extra));
+        }
+
+        public static bool IsASCII(string value)
         {
             // ASCII encoding replaces non-ascii with question marks, so we use UTF8 to see if multi-byte sequences are there
             return Encoding.UTF8.GetByteCount(value) == value.Length;
         }
 
-        public static string Print(PyRep obj, int indention = 0)
+        public void addLine(string line)
         {
-            var ret = new StringBuilder();
-            Print(ret, "", obj);
-            return ret.ToString();
+            builder.AppendLine(getIndent() + line);
         }
 
-        public static void Print(StringBuilder builder, string prefix, PyRep obj)
+        public void addItem(PyRep rep)
         {
-            if(obj == null)
+            indentLevel++;
+            if (rep == null)
             {
-                builder.AppendLine(prefix + "<nullptr>");
-                return;
+                addLine("<nullptr>");
             }
-            string pfx1 = prefix + Spacer;
-            string pfx2 = pfx1 + Spacer;
-            builder.AppendLine(prefix + obj.dump(prefix).TrimEnd('\r', '\n'));// + PrintRawData(obj));
+            else
+            {
+                rep.dump(this);
+            }
+            indentLevel--;
         }
+
+        public string Print(PyRep obj)
+        {
+            builder = new StringBuilder();
+            if (obj == null)
+            {
+                addLine("<nullptr>");
+            }
+            else
+            {
+                obj.dump(this);
+            }
+            return builder.ToString();
+        }
+
 
         public static string PrintRawData(PyRep obj)
         {

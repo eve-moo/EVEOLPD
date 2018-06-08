@@ -193,39 +193,40 @@ namespace eveMarshal
             throw new NotImplementedException();
         }
 
-        public override string dump(string prefix)
+        public override void dump(PrettyPrinter printer)
         {
-            StringBuilder builder = new StringBuilder();
-            string pfx1 = prefix + PrettyPrinter.Spacer;
-            builder.AppendLine("[PyPackedRow " + RawData.Length + " bytes]");
+            printer.addLine("[PyPackedRow " + RawData.Length + " bytes]");
             if (Descriptor != null)
             {
+                printer.indentLevel++;
                 if (Descriptor.Columns != null)
                 {
                     foreach (var column in Descriptor.Columns)
                     {
                         int index = Descriptor.Columns.FindIndex(x => x.Name == column.Name);
                         PyRep value = values[index];
-                        builder.AppendLine(pfx1 + "[\"" + column.Name + "\" => " + " [" + column.Type + "] " + value + "]");
+                        printer.addLine("[\"" + column.Name + "\" => " + " [" + column.Type + "] " + value + "]");
                     }
                 }
                 else
                 {
-                    builder.AppendLine(pfx1 + "[Columns parsing failed!]");
+                    printer.addLine("[Columns parsing failed!]");
                 }
+                printer.indentLevel--;
             }
             else
             {
                 if(DescriptorObj != null)
                 {
-                    builder.Append(pfx1 + DescriptorObj.dump(pfx1));
+                    printer.addItem(DescriptorObj);
                 }
                 else
                 {
-                    builder.Append("Error.. Obj missing.");
+                    printer.indentLevel++;
+                    printer.addLine("Error.. Obj missing.");
+                    printer.indentLevel--;
                 }
             }
-            return builder.ToString();
         }
 
     }

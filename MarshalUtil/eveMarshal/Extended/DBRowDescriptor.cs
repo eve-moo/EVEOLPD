@@ -103,12 +103,10 @@ namespace eveMarshal.Extended
             }
         }
 
-        public override string dump(string prefix)
+        public override void dump(PrettyPrinter printer)
         {
-            string pfx1 = prefix + PrettyPrinter.Spacer;
-            string pfx2 = pfx1 + PrettyPrinter.Spacer;
-            StringBuilder builder = new StringBuilder();
-            builder.AppendLine("[DBRowDescriptor]");
+            printer.addLine("[DBRowDescriptor]");
+            printer.indentLevel++;
             if (Columns != null)
             {
                 foreach (var column in Columns)
@@ -118,42 +116,44 @@ namespace eveMarshal.Extended
                         continue;
                     }
                     int index = Columns.FindIndex(x => x.Name == column.Name);
-                    builder.AppendLine(pfx1 + "[\"" + column.Name + "\" => " + " [" + column.Type + "] ]");
+                    printer.addLine("[\"" + column.Name + "\" => " + " [" + column.Type + "] ]");
                 }
             }
             else
             {
-                builder.AppendLine(pfx1 + "[Columns parsing failed!]");
+                printer.addLine("[Columns parsing failed!]");
             }
             if(keywords != null)
             {
-                builder.AppendLine(pfx1 + "keywords:");
+                printer.addLine("keywords:");
+                printer.indentLevel++;
                 foreach (var obj in keywords.Items)
                 {
                     PyTuple entry = obj as PyTuple;
                     if (entry == null || entry.Items.Count < 2)
                     {
-                        builder.AppendLine(pfx2 + "<bad keyword>");
+                        printer.addLine("<bad keyword>");
                         continue;
                     }
 
                     PyString name = entry.Items[0] as PyString;
                     if (name == null)
                     {
-                        builder.AppendLine(pfx2 + "<bad keyword name>");
+                        printer.addLine("<bad keyword name>");
                         continue;
                     }
 
                     PyToken token = entry.Items[1] as PyToken;
                     if (token == null)
                     {
-                        builder.AppendLine(pfx2 + "<bad keyword token>");
+                        printer.addLine("<bad keyword token>");
                         continue;
                     }
-                    builder.AppendLine(pfx2 + "[\"" + name.Value + "\" => " + " '" + token.Token + "' ]");
+                    printer.addLine("[\"" + name.Value + "\" => " + " '" + token.Token + "' ]");
                 }
+                printer.indentLevel--;
             }
-            return builder.ToString();
+            printer.indentLevel--;
         }
 
     }

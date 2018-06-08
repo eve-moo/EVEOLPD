@@ -154,32 +154,38 @@ namespace eveMarshal
 
             int totalBytesRead = 0;
             int bytesRead;
-
-            while ((bytesRead = source.Read(readBuffer, totalBytesRead, readBuffer.Length - totalBytesRead)) > 0)
+            try
             {
-                totalBytesRead += bytesRead;
-
-                if (totalBytesRead == readBuffer.Length)
+                while ((bytesRead = source.Read(readBuffer, totalBytesRead, readBuffer.Length - totalBytesRead)) > 0)
                 {
-                    int nextByte = source.ReadByte();
-                    if (nextByte != -1)
+                    totalBytesRead += bytesRead;
+
+                    if (totalBytesRead == readBuffer.Length)
                     {
-                        var temp = new byte[readBuffer.Length * 2];
-                        Buffer.BlockCopy(readBuffer, 0, temp, 0, readBuffer.Length);
-                        Buffer.SetByte(temp, totalBytesRead, (byte)nextByte);
-                        readBuffer = temp;
-                        totalBytesRead++;
+                        int nextByte = source.ReadByte();
+                        if (nextByte != -1)
+                        {
+                            var temp = new byte[readBuffer.Length * 2];
+                            Buffer.BlockCopy(readBuffer, 0, temp, 0, readBuffer.Length);
+                            Buffer.SetByte(temp, totalBytesRead, (byte)nextByte);
+                            readBuffer = temp;
+                            totalBytesRead++;
+                        }
                     }
                 }
-            }
 
-            byte[] buffer = readBuffer;
-            if (readBuffer.Length != totalBytesRead)
-            {
-                buffer = new byte[totalBytesRead];
-                Buffer.BlockCopy(readBuffer, 0, buffer, 0, totalBytesRead);
+                byte[] buffer = readBuffer;
+                if (readBuffer.Length != totalBytesRead)
+                {
+                    buffer = new byte[totalBytesRead];
+                    Buffer.BlockCopy(readBuffer, 0, buffer, 0, totalBytesRead);
+                }
+                return buffer;
             }
-            return buffer;
+            catch (Exception)
+            {
+            }
+            return null;
         }
 
     }
@@ -188,9 +194,17 @@ namespace eveMarshal
     {
         public static byte[] Decompress(byte[] input)
         {
+            if(input.Length < 3)
+            {
+                return null;
+            }
             // two bytes shaved off (zlib header)
             var sourceStream = new MemoryStream(input, 2, input.Length - 2);
             var stream = new DeflateStream(sourceStream, CompressionMode.Decompress);
+            if(stream == null)
+            {
+                return null;
+            }
             return stream.ReadAllBytes();
         }
     }

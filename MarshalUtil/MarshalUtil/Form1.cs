@@ -40,7 +40,8 @@ namespace MarshalUtil
                 //un.DebugMode = true;
                 //PyObject obj = un.Process(BinaryReader.);
                 PyRep obj = un.Process(raw);
-                txtOutput.Text = PrettyPrinter.Print(obj);
+                PrettyPrinter pp = new PrettyPrinter();
+                txtOutput.Text = pp.Print(obj);
             }
             catch
             {
@@ -56,7 +57,8 @@ namespace MarshalUtil
                 // un.DebugMode = true;
                 //PyObject obj = un.Process(BinaryReader.);
                 PyRep obj = un.Process(raw);
-                txtOutput.Text = PrettyPrinter.Print(obj);
+                PrettyPrinter pp = new PrettyPrinter();
+                txtOutput.Text = pp.Print(obj);
             }
             /*
             //txtOutput.Text = hex;

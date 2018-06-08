@@ -276,7 +276,10 @@ namespace MarshalUtil
                 PyRep obj = un.Process(data);
                 decodeDone = true;
                 obj = analyse(obj, filename);
-                string decoded = eveMarshal.PrettyPrinter.Print(obj);
+                eveMarshal.PrettyPrinter printer = new eveMarshal.PrettyPrinter();
+                printer.analizeInput = analizeInput;
+                printer.decompilePython = decompilePython;
+                string decoded = printer.Print(obj);
                 if (singleWriter != null)
                 {
                     // Write the filename.

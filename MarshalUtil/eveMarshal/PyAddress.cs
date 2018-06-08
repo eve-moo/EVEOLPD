@@ -101,7 +101,7 @@ namespace eveMarshal
             throw new InvalidOperationException("Function Not Implemented.");
         }
 
-        public override string dump(string prefix)
+        public override void dump(PrettyPrinter printer)
         {
             StringBuilder builder = new StringBuilder();
             builder.Append("[PyAddress " + addrType.ToString());
@@ -130,7 +130,7 @@ namespace eveMarshal
                     break;
             }
             builder.Append("]");
-            return builder.ToString();
+            printer.addLine(builder.ToString());
         }
     }
 }

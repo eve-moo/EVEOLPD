@@ -11,9 +11,9 @@ namespace eveMarshal.Extended
         {
         }
 
-        public override string dump(string prefix)
+        public override void dump(PrettyPrinter printer)
         {
-            return "[CacheOK]";
+            printer.addLine("[CacheOK]");
         }
     }
 }

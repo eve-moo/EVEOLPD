@@ -56,18 +56,17 @@ namespace eveMarshal
             return "<SubStream: " + Data + ">";
         }
 
-        public override string dump(string prefix)
+        public override void dump(PrettyPrinter printer)
         {
-            StringBuilder builder = new StringBuilder();
             if (RawData != null)
             {
-                builder.AppendLine("[PySubStream " + RawData.Length + " bytes]");
+                printer.addLine("[PySubStream " + RawData.Length + " bytes]");
             }
-            else {
-                builder.AppendLine("[PySubStream]");
+            else
+            {
+                printer.addLine("[PySubStream]");
             }
-            PrettyPrinter.Print(builder, prefix + PrettyPrinter.Spacer, Data);
-            return builder.ToString();
+            printer.addItem(Data);
         }
 
     }

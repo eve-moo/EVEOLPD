@@ -32,9 +32,9 @@ namespace eveMarshal
         {
             output.Write(Data);
         }
-        public override string dump(string prefix)
+        public override void dump(PrettyPrinter printer)
         {
-            return PrettyPrinter.PrintRawData(this);
+            printer.addLine(PrettyPrinter.PrintRawData(this));
         }
 
     }

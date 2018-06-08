@@ -36,20 +36,17 @@ namespace eveMarshal.Extended
             }
         }
 
-        public override string dump(string prefix)
+        public override void dump(PrettyPrinter printer)
         {
-            string pfx1 = prefix + PrettyPrinter.Spacer;
-            string pfx2 = pfx1 + PrettyPrinter.Spacer;
-            string pfx3 = pfx2 + PrettyPrinter.Spacer + PrettyPrinter.Spacer;
-            StringBuilder builder = new StringBuilder();
-            builder.AppendLine("[CRowSet]" + PrettyPrinter.PrintRawData(this));
-            builder.AppendLine(pfx1 + descriptor.dump(pfx1).TrimEnd('\r', '\n'));
-            builder.AppendLine(pfx1 + "Rows:");
+            printer.addLine("[CRowSet]" + PrettyPrinter.PrintRawData(this));
+            printer.addItem(descriptor);
+            printer.indentLevel++;
+            printer.addLine("Rows:");
             foreach (var item in rows)
             {
-                PrettyPrinter.Print(builder, pfx2, item);
+                printer.addItem(item);
             }
-            return builder.ToString();
+            printer.indentLevel--;
         }
 
     }

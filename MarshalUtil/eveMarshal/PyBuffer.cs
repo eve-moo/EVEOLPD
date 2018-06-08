@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Text;
+using Python;
 
 namespace eveMarshal
 {
@@ -45,25 +46,43 @@ namespace eveMarshal
             return "<" + BitConverter.ToString(Data) + ">";
         }
 
-        public override string dump(string prefix)
+        public override void dump(PrettyPrinter printer)
         {
-            StringBuilder builder = new StringBuilder();
-            builder.AppendLine(prefix + "[PyBuffer " + Data.Length + " bytes]" + PrettyPrinter.PrintRawData(this));
+            printer.addLine("[PyBuffer " + Data.Length + " bytes]" + PrettyPrinter.PrintRawData(this));
             if(Data[0] == Unmarshal.HeaderByte || Data[0] == Unmarshal.ZlibMarker)
             {
-                string pfx1 = prefix + PrettyPrinter.Spacer;
-                Unmarshal un = new Unmarshal();
-                PyRep rep = un.Process(Data);
-                if(rep != null)
+                byte[] d = Data;
+                if (d[0] == Unmarshal.ZlibMarker)
                 {
-                    if(Data[0] == Unmarshal.ZlibMarker)
+                    d = Zlib.Decompress(d);
+                }
+                if (d!= null && d[0] == Unmarshal.PythonMarker && printer.decompilePython)
+                {
+                    // We have a python file.
+                    Bytecode code = new Bytecode();
+                    if (code.load(d, true))
                     {
-                        builder.AppendLine("<compressed-data>");
+                        Python.PrettyPrinter pp = new Python.PrettyPrinter();
+                        pp.indentLevel = printer.indentLevel + 1;
+                        pp.indent = printer.indent;
+                        code.dump(pp);
+                        printer.addLine(pp.dump);
                     }
-                    builder.AppendLine(pfx1 + rep.dump(pfx1));
+                }
+                else
+                {
+                    Unmarshal un = new Unmarshal();
+                    PyRep rep = un.Process(d);
+                    if (rep != null)
+                    {
+                        if (Data[0] == Unmarshal.ZlibMarker)
+                        {
+                            printer.addLine("<compressed-data>");
+                        }
+                        printer.addItem(rep);
+                    }
                 }
             }
-            return builder.ToString();
         }
 
     }

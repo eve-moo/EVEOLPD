@@ -51,13 +51,10 @@ namespace eveMarshal.Extended
             errorPayload = sub.Data;
         }
 
-        public override string dump(string prefix)
+        public override void dump(PrettyPrinter printer)
         {
-            string pfx1 = prefix + PrettyPrinter.Spacer;
-            StringBuilder builder = new StringBuilder();
-            builder.AppendLine("ErrorResponse: msgType=" + causingMessageType + " code=" + errorCode);
-            PrettyPrinter.Print(builder, pfx1, errorPayload);
-            return builder.ToString();
+            printer.addLine("ErrorResponse: msgType=" + causingMessageType + " code=" + errorCode);
+            printer.addItem(errorPayload);
         }
 
     }

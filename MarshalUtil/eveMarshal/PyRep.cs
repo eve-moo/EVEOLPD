@@ -145,7 +145,7 @@ namespace eveMarshal
             return "<" + Type + ">";
         }
 
-        public abstract string dump(string prefix);
+        public abstract void dump(PrettyPrinter printer);
     }
 
 }

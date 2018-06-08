@@ -24,30 +24,31 @@ namespace eveMarshal.Extended
             Dictionary = dict;
         }
 
-        public override string dump(string prefix)
+        public override void dump(PrettyPrinter printer)
         {
-            StringBuilder builder = new StringBuilder();
-            builder.AppendLine("[DefaultDict]");
+            printer.addLine("[DefaultDict]");
             if (Dictionary != null)
             {
-                string pfx1 = prefix + PrettyPrinter.Spacer;
-                string pfx2 = pfx1 + PrettyPrinter.Spacer;
-                string pfx3 = pfx1 + PrettyPrinter.Spacer + PrettyPrinter.Spacer;
-                builder.AppendLine(pfx1 + "Dictionary:");
+                printer.indentLevel++;
+                printer.addLine("Dictionary:");
+                printer.indentLevel++;
                 foreach (var kvp in Dictionary)
                 {
-                    PrettyPrinter.Print(builder, pfx2 + "Key:", kvp.Key);
+                    printer.addLine("Key:");
+                    printer.addItem(kvp.Key);
                     if (kvp.Value == null)
                     {
-                        builder.AppendLine(pfx2 + "==Value: <nullptr>");
+                        printer.addLine("Value: <nullptr>");
                     }
                     else
                     {
-                        builder.AppendLine(pfx2 + "==Value:" + kvp.Value.dump(pfx3).TrimEnd('\r', '\n'));
+                        printer.addLine("Value:");
+                        printer.addItem(kvp.Value);
                     }
                 }
+                printer.indentLevel--;
+                printer.indentLevel--;
             }
-            return builder.ToString();
         }
     }
 }

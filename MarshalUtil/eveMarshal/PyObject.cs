@@ -40,12 +40,10 @@ namespace eveMarshal
             Arguments.Encode(output);
         }
 
-        public override string dump(string prefix)
+        public override void dump(PrettyPrinter printer)
         {
-            StringBuilder builder = new StringBuilder();
-            builder.AppendLine("[PyObject Name: " + Name + "]" + PrettyPrinter.PrintRawData(this));
-            PrettyPrinter.Print(builder, prefix + PrettyPrinter.Spacer, Arguments);
-            return builder.ToString();
+            printer.addLine("[PyObject Name: " + Name + "]" + PrettyPrinter.PrintRawData(this));
+            printer.addItem(Arguments);
         }
 
     }

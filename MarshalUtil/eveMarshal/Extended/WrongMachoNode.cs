@@ -39,9 +39,9 @@ namespace eveMarshal.Extended
             correctNode = value.IntValue;
         }
 
-        public override string dump(string prefix)
+        public override void dump(PrettyPrinter printer)
         {
-            return "[WrongMachoNode: correct node = " + correctNode + "]";
+            printer.addLine("[WrongMachoNode: correct node = " + correctNode + "]");
         }
     }
 }

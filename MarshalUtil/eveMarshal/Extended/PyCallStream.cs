@@ -70,41 +70,38 @@ namespace eveMarshal.Extended
             }
         }
 
-        public override string dump(string prefix)
+        public override void dump(PrettyPrinter printer)
         {
-            string pfx1 = prefix + PrettyPrinter.Spacer;
-            string pfx2 = pfx1 + PrettyPrinter.Spacer;
-            string pfx3 = pfx2 + PrettyPrinter.Spacer;
-            StringBuilder builder = new StringBuilder();
-            builder.AppendLine("[PyCallStream" + zeroOne +"]");
-            if(remoteObject == 0)
+            printer.addLine("[PyCallStream" + zeroOne +"]");
+            printer.indentLevel++;
+            if (remoteObject == 0)
             {
-                builder.AppendLine(pfx1 + "remoteObject: '" + remoteObjectStr + "'");
+                printer.addLine("remoteObject: '" + remoteObjectStr + "'");
             }
             else
             {
-                builder.AppendLine(pfx1 + "remoteObject: " + remoteObject);
+                printer.addLine("remoteObject: " + remoteObject);
             }
-            builder.AppendLine(pfx1 + "Method: '" + method + "'");
-            builder.AppendLine(pfx1 + "Arguments:");
+            printer.addLine("Method: '" + method + "'");
+            printer.addLine("Arguments:");
             if (extended != null)
             {
-                PrettyPrinter.Print(builder, pfx2, extended);
+                printer.addItem(extended);
             }
             else
             {
-                PrettyPrinter.Print(builder, pfx2, arg_tuple);
+                printer.addItem(arg_tuple);
             }
             if(arg_dict == null)
             {
-                builder.AppendLine(pfx1 + "Named Arguments: None");
+                printer.addLine("Named Arguments: None");
             }
             else
             {
-                builder.AppendLine(pfx1 + "Named Arguments:");
-                PrettyPrinter.Print(builder, pfx2, arg_dict);
+                printer.addLine("Named Arguments:");
+                printer.addItem(arg_dict);
             }
-            return builder.ToString();
+            printer.indentLevel++;
         }
     }
 }

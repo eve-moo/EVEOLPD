@@ -46,21 +46,23 @@ namespace eveMarshal.Extended
             columnName = name.StringValue;
         }
 
-        public override string dump(string prefix)
+        public override void dump(PrettyPrinter printer)
         {
-            string pfx1 = prefix + PrettyPrinter.Spacer;
-            string pfx2 = pfx1 + PrettyPrinter.Spacer;
-            StringBuilder builder = new StringBuilder();
-            builder.AppendLine("[CIndexedRowSet]" + PrettyPrinter.PrintRawData(this));
-            builder.AppendLine(pfx1 + "index: " + columnName);
-            builder.AppendLine(pfx1 + descriptor.dump(pfx1).TrimEnd('\r', '\n'));
-            builder.AppendLine(pfx1 + "Rows:");
+            printer.addLine("[CIndexedRowSet]" + PrettyPrinter.PrintRawData(this));
+            printer.indentLevel++;
+            printer.addLine("index: " + columnName);
+            printer.addItem(descriptor);
+            printer.addLine("Rows:");
+            printer.indentLevel++;
             foreach (var item in rows)
             {
-                PrettyPrinter.Print(builder, pfx2 + "Key:", item.Key);
-                PrettyPrinter.Print(builder, pfx2, item.Value);
+                printer.addLine("Key:");
+                printer.addItem(item.Key);
+                printer.addLine("Value:");
+                printer.addItem(item.Value);
             }
-            return builder.ToString();
+            printer.indentLevel--;
+            printer.indentLevel++;
         }
 
     }
