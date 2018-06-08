@@ -1,14 +1,17 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2026
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarshalUtil", "MarshalUtil\MarshalUtil.csproj", "{CD089931-B099-462C-8956-C73B06501656}"
 	ProjectSection(ProjectDependencies) = postProject
+		{7783935E-EEA2-401C-A839-3D698EDF6CE6} = {7783935E-EEA2-401C-A839-3D698EDF6CE6}
 		{41D634C1-627E-4DC4-8878-8BC486CA0B81} = {41D634C1-627E-4DC4-8878-8BC486CA0B81}
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eveMarshal", "eveMarshal\eveMarshal.csproj", "{41D634C1-627E-4DC4-8878-8BC486CA0B81}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PyDecomp", "..\PyDecomp\PyDecomp.csproj", "{7783935E-EEA2-401C-A839-3D698EDF6CE6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -24,8 +27,15 @@ Global
 		{41D634C1-627E-4DC4-8878-8BC486CA0B81}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{41D634C1-627E-4DC4-8878-8BC486CA0B81}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{41D634C1-627E-4DC4-8878-8BC486CA0B81}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7783935E-EEA2-401C-A839-3D698EDF6CE6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7783935E-EEA2-401C-A839-3D698EDF6CE6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7783935E-EEA2-401C-A839-3D698EDF6CE6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7783935E-EEA2-401C-A839-3D698EDF6CE6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {33C6C923-5F35-4A10-BBE0-6757EF68E27D}
 	EndGlobalSection
 EndGlobal

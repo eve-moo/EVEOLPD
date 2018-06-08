@@ -106,6 +106,7 @@ namespace MarshalUtil
             {
                 ProcessStatus prc = new ProcessStatus(lastPath);
                 prc.analizeInput = selectAnalize.Checked;
+                prc.decompilePython = decompilePython.Checked;
                 progressIndicators.Controls.Add(prc);
             }
             else
@@ -116,6 +117,7 @@ namespace MarshalUtil
                 {
                     ProcessStatus prc = new ProcessStatus(dir);
                     prc.analizeInput = selectAnalize.Checked;
+                    prc.decompilePython = decompilePython.Checked;
                     progressIndicators.Controls.Add(prc);
                 }
             }

@@ -36,6 +36,7 @@
             this.progressBar2 = new System.Windows.Forms.ProgressBar();
             this.progressIndicators = new System.Windows.Forms.FlowLayoutPanel();
             this.selectAnalize = new System.Windows.Forms.CheckBox();
+            this.decompilePython = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // button1
@@ -87,7 +88,7 @@
             // packetSubDirs
             // 
             this.packetSubDirs.AutoSize = true;
-            this.packetSubDirs.Location = new System.Drawing.Point(80, 45);
+            this.packetSubDirs.Location = new System.Drawing.Point(89, 45);
             this.packetSubDirs.Name = "packetSubDirs";
             this.packetSubDirs.Size = new System.Drawing.Size(138, 17);
             this.packetSubDirs.TabIndex = 6;
@@ -109,9 +110,9 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.progressIndicators.AutoScroll = true;
-            this.progressIndicators.Location = new System.Drawing.Point(12, 69);
+            this.progressIndicators.Location = new System.Drawing.Point(12, 91);
             this.progressIndicators.Name = "progressIndicators";
-            this.progressIndicators.Size = new System.Drawing.Size(468, 244);
+            this.progressIndicators.Size = new System.Drawing.Size(468, 222);
             this.progressIndicators.TabIndex = 8;
             // 
             // selectAnalize
@@ -119,18 +120,29 @@
             this.selectAnalize.AutoSize = true;
             this.selectAnalize.Checked = true;
             this.selectAnalize.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.selectAnalize.Location = new System.Drawing.Point(224, 45);
+            this.selectAnalize.Location = new System.Drawing.Point(12, 68);
             this.selectAnalize.Name = "selectAnalize";
             this.selectAnalize.Size = new System.Drawing.Size(102, 17);
             this.selectAnalize.TabIndex = 9;
             this.selectAnalize.Text = "Analize Packets";
             this.selectAnalize.UseVisualStyleBackColor = true;
             // 
+            // decompilePython
+            // 
+            this.decompilePython.AutoSize = true;
+            this.decompilePython.Location = new System.Drawing.Point(120, 68);
+            this.decompilePython.Name = "decompilePython";
+            this.decompilePython.Size = new System.Drawing.Size(112, 17);
+            this.decompilePython.TabIndex = 10;
+            this.decompilePython.Text = "Decompile Python";
+            this.decompilePython.UseVisualStyleBackColor = true;
+            // 
             // Form2
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(492, 354);
+            this.Controls.Add(this.decompilePython);
             this.Controls.Add(this.selectAnalize);
             this.Controls.Add(this.progressIndicators);
             this.Controls.Add(this.progressBar2);
@@ -157,5 +169,6 @@
         private System.Windows.Forms.ProgressBar progressBar2;
         private System.Windows.Forms.FlowLayoutPanel progressIndicators;
         private System.Windows.Forms.CheckBox selectAnalize;
+        private System.Windows.Forms.CheckBox decompilePython;
     }
 }

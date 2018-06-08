@@ -3,6 +3,8 @@ using System.Windows.Forms;
 using eveMarshal;
 using System.IO;
 using System.Threading;
+using Python;
+using static Python.Bytecode;
 
 namespace MarshalUtil
 {
@@ -11,6 +13,7 @@ namespace MarshalUtil
         string[] PACKET_FILES = new string[] { };
         string workingDirectory = null;
         public bool analizeInput = false;
+        public bool decompilePython = false;
 
         public ProcessStatus(string dir)
         {
@@ -233,10 +236,35 @@ namespace MarshalUtil
             if (data[0] != HeaderByte)
             {
                 // No, is this a python file? If yes, ignore it but dont cause an error.
-                if(data[0] == PythonMarker)
+                if(data[0] == PythonMarker && decompilePython)
                 {
-                    //string py = PrettyPrinter.ByteArrayToString(data);
-                    //addText("Found python file: " + py);
+                    Bytecode code = new Bytecode();
+                    code.load(data);
+                    string outfile = null;
+                    if(code.body != null)
+                    {
+                        Python.PyString fns = code.body.filename as Python.PyString;
+                        if (fns != null)
+                        {
+                            outfile = fns.str;
+                            outfile = outfile.Replace(':', '_');
+                            outfile = outfile.Replace('\\', '-');
+                            outfile = outfile.Replace('/', '-');
+                        }
+
+                    }
+                    if (outfile != null)
+                    {
+                        string pyd = Path.GetDirectoryName(filename);
+                        pyd += "\\py\\";
+                        if (!Directory.Exists(pyd))
+                        {
+                            Directory.CreateDirectory(pyd);
+                        }
+                        outfile = pyd + "\\" + outfile + ".txt";
+                        string dump = Python.PrettyPrinter.print(code, true);
+                        File.WriteAllText(outfile, dump);
+                    }
                 }
                 return data[0] == PythonMarker;
             }
@@ -248,7 +276,7 @@ namespace MarshalUtil
                 PyRep obj = un.Process(data);
                 decodeDone = true;
                 obj = analyse(obj, filename);
-                string decoded = PrettyPrinter.Print(obj);
+                string decoded = eveMarshal.PrettyPrinter.Print(obj);
                 if (singleWriter != null)
                 {
                     // Write the filename.
@@ -296,7 +324,7 @@ namespace MarshalUtil
         {
             if (obj.Type == PyObjectType.ObjectData)
             {
-                PyObject packetData = obj as PyObject;
+                eveMarshal.PyObject packetData = obj as eveMarshal.PyObject;
                 try
                 {
                     return new PyPacket(packetData);

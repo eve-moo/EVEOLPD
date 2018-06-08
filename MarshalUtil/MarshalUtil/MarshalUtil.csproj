@@ -96,6 +96,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\PyDecomp\PyDecomp.csproj">
+      <Project>{7783935e-eea2-401c-a839-3d698edf6ce6}</Project>
+      <Name>PyDecomp</Name>
+    </ProjectReference>
     <ProjectReference Include="..\eveMarshal\eveMarshal.csproj">
       <Project>{41d634c1-627e-4dc4-8878-8bc486ca0b81}</Project>
       <Name>eveMarshal</Name>

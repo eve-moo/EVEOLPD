@@ -2,4 +2,8 @@
 # This .gitignore file was automatically created by Microsoft(R) Visual Studio.
 ################################################################################
 
-/advapi32/advapi32/Release
+Debug/
+Release/
+.vs/
+ipch/
+*.sdf
