@@ -49,18 +49,18 @@ namespace eveMarshal
         public override void dump(PrettyPrinter printer)
         {
             printer.addLine("[PyBuffer " + Data.Length + " bytes]" + PrettyPrinter.PrintRawData(this));
-            if(Data[0] == Unmarshal.HeaderByte || Data[0] == Unmarshal.ZlibMarker)
+            if(Data != null &&(Data[0] == Unmarshal.HeaderByte || Data[0] == Unmarshal.ZlibMarker || Data[0] == 0x63))
             {
                 byte[] d = Data;
                 if (d[0] == Unmarshal.ZlibMarker)
                 {
                     d = Zlib.Decompress(d);
                 }
-                if (d!= null && d[0] == Unmarshal.PythonMarker && printer.decompilePython)
+                if (d != null && (d[0] == Unmarshal.PythonMarker || d[0] == 0x63) && printer.decompilePython && d.Length > 60)
                 {
                     // We have a python file.
                     Bytecode code = new Bytecode();
-                    if (code.load(d, true))
+                    if (code.load(d, d[0] == 0x63))
                     {
                         Python.PrettyPrinter pp = new Python.PrettyPrinter();
                         pp.indentLevel = printer.indentLevel + 1;
@@ -69,7 +69,7 @@ namespace eveMarshal
                         printer.addLine(pp.dump);
                     }
                 }
-                else
+                else if(d != null && d[0] == Unmarshal.HeaderByte)
                 {
                     Unmarshal un = new Unmarshal();
                     PyRep rep = un.Process(d);

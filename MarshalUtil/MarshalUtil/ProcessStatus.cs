@@ -14,6 +14,7 @@ namespace MarshalUtil
         string workingDirectory = null;
         public bool analizeInput = false;
         public bool decompilePython = false;
+        public bool imbededPython = true;
 
         public ProcessStatus(string dir)
         {
@@ -236,34 +237,56 @@ namespace MarshalUtil
             if (data[0] != HeaderByte)
             {
                 // No, is this a python file? If yes, ignore it but dont cause an error.
-                if(data[0] == PythonMarker && decompilePython)
+                if(data[0] == PythonMarker && decompilePython && !imbededPython)
                 {
-                    Bytecode code = new Bytecode();
-                    code.load(data);
-                    string outfile = null;
-                    if(code.body != null)
+                    try
                     {
-                        Python.PyString fns = code.body.filename as Python.PyString;
-                        if (fns != null)
+                        Bytecode code = new Bytecode();
+                        code.load(data);
+                        string outfile = null;
+                        if (code.body != null)
                         {
-                            outfile = fns.str;
-                            outfile = outfile.Replace(':', '_');
-                            outfile = outfile.Replace('\\', '-');
-                            outfile = outfile.Replace('/', '-');
-                        }
+                            Python.PyString fns = code.body.filename as Python.PyString;
+                            if (fns != null)
+                            {
+                                outfile = fns.str;
+                                outfile = outfile.Replace(':', '_');
+                                outfile = outfile.Replace('\\', '-');
+                                outfile = outfile.Replace('/', '-');
+                            }
 
-                    }
-                    if (outfile != null)
-                    {
-                        string pyd = Path.GetDirectoryName(filename);
-                        pyd += "\\py\\";
-                        if (!Directory.Exists(pyd))
-                        {
-                            Directory.CreateDirectory(pyd);
                         }
-                        outfile = pyd + "\\" + outfile + ".txt";
-                        string dump = Python.PrettyPrinter.print(code, true);
-                        File.WriteAllText(outfile, dump);
+                        if (outfile != null)
+                        {
+                            string pyd = Path.GetDirectoryName(filename);
+                            pyd += "\\py\\";
+                            if (!Directory.Exists(pyd))
+                            {
+                                Directory.CreateDirectory(pyd);
+                            }
+                            outfile = pyd + "\\" + outfile + ".txt";
+                            string dump = Python.PrettyPrinter.print(code, true);
+                            File.WriteAllText(outfile, dump);
+                        }
+                    }
+                    catch(Exception e)
+                    {
+                        string err = Path.GetFileName(filename) + Environment.NewLine + "Error: " + e.ToString();
+                        // We, had an error but should still produce some kind of notice in the output.
+                        addText(err + Environment.NewLine);
+                        if (singleWriter != null)
+                        {
+                            //// Write the filename.
+                            //singleWriter.WriteLine(Path.GetFileName(filename));
+                            //// Write the decoded file.
+                            //singleWriter.WriteLine("Python Decoder Error.");
+                            //singleWriter.WriteLine(err);
+                        }
+                        else
+                        {
+                            //File.WriteAllText(filename + ".txt", err);
+                        }
+                        return false;
                     }
                 }
                 return data[0] == PythonMarker;

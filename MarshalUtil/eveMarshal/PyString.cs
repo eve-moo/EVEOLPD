@@ -177,7 +177,7 @@ namespace eveMarshal
             }
 
             bool printed = false;
-            if (Raw.Length > 0 && (Raw[0] == (byte)Unmarshal.ZlibMarker || Raw[0] == (byte)Unmarshal.HeaderByte || Raw[0] == Unmarshal.PythonMarker))
+            if (Raw.Length > 0 && (Raw[0] == (byte)Unmarshal.ZlibMarker || Raw[0] == (byte)Unmarshal.HeaderByte || Raw[0] == Unmarshal.PythonMarker || Raw[0] == 0x63))
             {
                 // We have serialized python data, decode and display it.
                 byte[] d = Raw;
@@ -185,11 +185,11 @@ namespace eveMarshal
                 {
                     d = Zlib.Decompress(d);
                 }
-                if (d != null && d[0] == Unmarshal.PythonMarker && printer.decompilePython)
+                if (d != null && (d[0] == Unmarshal.PythonMarker || d[0]== 0x63) && printer.decompilePython && d.Length > 60)
                 {
                     // We have a python file.
                     Bytecode code = new Bytecode();
-                    if (code.load(d, true))
+                    if (code.load(d, d[0] == 0x63))
                     {
                         printer.addLine("[" + name);
                         Python.PrettyPrinter pp = new Python.PrettyPrinter();
@@ -201,11 +201,11 @@ namespace eveMarshal
                         printed = true;
                     }
                 }
-                else
+                else if(d != null && d[0] == Unmarshal.HeaderByte)
                 {
                     Unmarshal un = new Unmarshal();
                     un.analizeInput = decodedAnalized;
-                    PyRep obj = un.Process(Raw);
+                    PyRep obj = un.Process(d);
                     if(obj != null)
                     {
                         string sType = "<serialized>";

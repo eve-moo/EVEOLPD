@@ -37,6 +37,7 @@
             this.progressIndicators = new System.Windows.Forms.FlowLayoutPanel();
             this.selectAnalize = new System.Windows.Forms.CheckBox();
             this.decompilePython = new System.Windows.Forms.CheckBox();
+            this.imbededPython = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // button1
@@ -137,11 +138,24 @@
             this.decompilePython.Text = "Decompile Python";
             this.decompilePython.UseVisualStyleBackColor = true;
             // 
+            // imbededPython
+            // 
+            this.imbededPython.AutoSize = true;
+            this.imbededPython.Checked = true;
+            this.imbededPython.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.imbededPython.Location = new System.Drawing.Point(238, 68);
+            this.imbededPython.Name = "imbededPython";
+            this.imbededPython.Size = new System.Drawing.Size(125, 17);
+            this.imbededPython.TabIndex = 11;
+            this.imbededPython.Text = "Imbeded Python only";
+            this.imbededPython.UseVisualStyleBackColor = true;
+            // 
             // Form2
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(492, 354);
+            this.Controls.Add(this.imbededPython);
             this.Controls.Add(this.decompilePython);
             this.Controls.Add(this.selectAnalize);
             this.Controls.Add(this.progressIndicators);
@@ -170,5 +184,6 @@
         private System.Windows.Forms.FlowLayoutPanel progressIndicators;
         private System.Windows.Forms.CheckBox selectAnalize;
         private System.Windows.Forms.CheckBox decompilePython;
+        private System.Windows.Forms.CheckBox imbededPython;
     }
 }

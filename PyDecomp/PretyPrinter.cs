@@ -29,7 +29,14 @@ namespace Python
         public void addItem(PyObject obj)
         {
             indentLevel++;
-            obj.dump(this);
+            if (obj != null)
+            {
+                obj.dump(this);
+            }
+            else
+            {
+                addLine("<nullptr>");
+            }
             indentLevel--;
         }
     }
