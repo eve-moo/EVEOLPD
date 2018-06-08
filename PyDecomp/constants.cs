@@ -18,7 +18,8 @@
         Int = 105,
         String = 115,
         Interned = 116,
-        UnicodeString = 117
+        UnicodeString = 117,
+        Long = 103
     }
 
     public enum OpCode

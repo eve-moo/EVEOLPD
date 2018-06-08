@@ -105,9 +105,11 @@ namespace Python
         public Int32 value = 0;
         public PyInt()
         {
+            type = ObjectType.Int;
         }
         public PyInt(int val)
         {
+            type = ObjectType.Int;
             value = val;
         }
         public override bool load(BinaryReader reader)
@@ -125,9 +127,66 @@ namespace Python
             {
                 return false;
             }
-            if(other is PyInt)
+            if (other is PyInt)
             {
                 return (other as PyInt).value == value;
+            }
+            if (other is PyLong)
+            {
+                return (other as PyLong).value == value;
+            }
+            if (other is PyString)
+            {
+                PyString str = other as PyString;
+                UInt32 ov = UInt32.Parse(str.str);
+                return ov == value;
+            }
+            return false;
+        }
+        public override int hash()
+        {
+            return value.GetHashCode();
+        }
+        public override string ToString()
+        {
+            return value.ToString();
+        }
+    }
+
+    public class PyLong : PyObject
+    {
+        public Int64 value = 0;
+        public PyLong()
+        {
+            type = ObjectType.Long;
+        }
+        public PyLong(int val)
+        {
+            type = ObjectType.Long;
+            value = val;
+        }
+        public override bool load(BinaryReader reader)
+        {
+            value = reader.ReadInt64();
+            return true;
+        }
+        public override void dump(PrettyPrinter printer)
+        {
+            printer.addLine("{" + value.ToString() + "}");
+        }
+        public override bool Equals(PyObject other)
+        {
+            if (other == null)
+            {
+                return false;
+            }
+            if (other is PyInt)
+            {
+                return (other as PyInt).value == value;
+            }
+            if (other is PyLong)
+            {
+                return (other as PyLong).value == value;
             }
             if (other is PyString)
             {
@@ -183,9 +242,11 @@ namespace Python
         public string str;
         public PyString()
         {
+            type = ObjectType.String;
         }
         public PyString(string val)
         {
+            type = ObjectType.String;
             str = val;
             size = str.Length;
         }
@@ -219,6 +280,11 @@ namespace Python
             if (other is PyInt)
             {
                 PyInt ov = other as PyInt;
+                return ov.value.ToString() == str;
+            }
+            if (other is PyLong)
+            {
+                PyLong ov = other as PyLong;
                 return ov.value.ToString() == str;
             }
             return false;

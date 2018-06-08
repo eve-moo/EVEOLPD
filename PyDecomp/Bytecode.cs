@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 
 namespace Python
 {
@@ -68,6 +66,10 @@ namespace Python
                     break;
                 case (int)ObjectType.Int:
                     ret = new PyInt();
+                    break;
+                case 103:
+                    // Not 100% sure this is correct but it seams to work.
+                    ret = new PyLong();
                     break;
                 default:
                     return null;

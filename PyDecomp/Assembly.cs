@@ -14,7 +14,7 @@ namespace Python
         public bool load(BinaryReader reader)
         {
             byte magic = reader.ReadByte();
-            if (magic != 0x73)//115
+            if (magic != 0x73 && magic != 0x74)//115 (116 = non standard)
             {
                 return false;
             }
