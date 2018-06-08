@@ -14,15 +14,18 @@ namespace Python
 
         public Bytecode() { }
 
-        public bool load(byte[] data)
+        public bool load(byte[] data, bool headerless = false)
         {
             BinaryReader reader = new BinaryReader(new MemoryStream(data));
-            magic = reader.ReadUInt16();
-            crlf = reader.ReadUInt16();
-            modification_timestamp = reader.ReadUInt32();
-            if (crlf != 0x0A0D)
+            if (!headerless)
             {
-                return false;
+                magic = reader.ReadUInt16();
+                crlf = reader.ReadUInt16();
+                modification_timestamp = reader.ReadUInt32();
+                if (crlf != 0x0A0D)
+                {
+                    return false;
+                }
             }
             body = loadObject(reader) as CodeBlock;
             return body != null;
